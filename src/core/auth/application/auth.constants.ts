@@ -2,3 +2,4 @@ export const USER_REPOSITORY = 'USER_REPOSITORY';
 export const HASHING_SERVICE = 'HASHING_SERVICE';
 export const JWT_SECRET = 'JWT_SECRET';
 export const JWT_EXPIRES_IN = 'JWT_EXPIRES_IN';
+export const JWT_SERVICE = 'JWT_SERVICE';

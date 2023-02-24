@@ -1,4 +1,4 @@
-import { UserRole } from "./role.enum";
+import { UserRole } from './role.enum';
 
 export class User {
   private readonly _id: number;
@@ -6,25 +6,19 @@ export class User {
   private readonly _password: string;
   private readonly _role: UserRole;
 
-  constructor(
-    id: number,
-    email: string,
-    password: string,
-    role: UserRole,
-  ) {
+  constructor(id: number, email: string, password: string, role: UserRole) {
     this._id = id;
     this._email = email;
     this._password = password;
     this._role = role;
   }
 
-
   get id() {
-    return this._id
+    return this._id;
   }
 
   get email() {
-    return this._email
+    return this._email;
   }
 
   get password() {

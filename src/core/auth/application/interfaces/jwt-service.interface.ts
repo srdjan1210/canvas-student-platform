@@ -1,6 +1,5 @@
-import { TokenPayload } from "../../domain/token-payload";
-
+import { TokenPayload } from '../../domain/token-payload';
 
 export interface IJwtService {
-  generateToken(payload: TokenPayload)
+  generateToken(payload: TokenPayload);
 }

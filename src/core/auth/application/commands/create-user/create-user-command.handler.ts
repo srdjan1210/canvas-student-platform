@@ -5,6 +5,7 @@ import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { IUserRepository } from '../../../domain/interfaces/user-repository.interface';
 import { User } from '../../../domain/user';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
+import { AccountCreatedEvent } from '../../../events/account-created/account-created.event';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserCommandHandler
@@ -17,6 +18,7 @@ export class CreateUserCommandHandler
   async execute({ email, password, role }: CreateUserCommand): Promise<any> {
     const hashedPassword = await this.hashingService.hashPassword(password);
     const user: User = new User(null, email, hashedPassword, role);
+    user.apply(new AccountCreatedEvent(user.email));
     return await this.userRepository.create(user);
   }
 }

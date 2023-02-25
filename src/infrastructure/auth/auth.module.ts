@@ -17,8 +17,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JWTService } from './services/jwt.service';
 import { HashingService } from './services/hashing.service';
+import { LoginCommandHandler } from '../../core/auth/application/commands/login/login-command.handler';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
-const commandHandlers = [CreateUserCommandHandler];
+const commandHandlers = [CreateUserCommandHandler, LoginCommandHandler];
 
 const providers: Provider[] = [
   {
@@ -33,6 +36,7 @@ const providers: Provider[] = [
     provide: JWT_SERVICE,
     useClass: JWTService,
   },
+  JwtStrategy,
   UserEntityMapperFactory,
 ];
 @Module({
@@ -41,6 +45,7 @@ const providers: Provider[] = [
     PrismaModule,
     SharedModule,
     CqrsModule,
+    ConfigModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
@@ -52,7 +57,7 @@ const providers: Provider[] = [
       }),
     }),
   ],
-  controllers: [],
+  controllers: [AuthController],
   exports: [],
 })
 export class AuthModule {}

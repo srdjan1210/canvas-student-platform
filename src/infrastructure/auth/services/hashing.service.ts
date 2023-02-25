@@ -11,8 +11,9 @@ export class HashingService implements IHashingService {
     return bcrypt.compare(password, existingPassword);
   }
 
-  hashPassword(password: string): Promise<string> {
-    const salt = bcrypt.genSalt(10);
+  async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(10);
+    console.log(salt);
     return bcrypt.hash(password, salt);
   }
 }

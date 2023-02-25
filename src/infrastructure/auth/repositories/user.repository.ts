@@ -3,6 +3,7 @@ import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { IUserRepository } from '../../../core/auth/domain/interfaces/user-repository.interface';
 import { User } from '../../../core/auth/domain/user';
 import { UserEntityMapperFactory } from '../factories/user-mapper.factory';
+import { UserEntityRole } from '@prisma/client';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -13,7 +14,11 @@ export class UserRepository implements IUserRepository {
 
   async create(user: User): Promise<User> {
     const userEntity = await this.prisma.userEntity.create({
-      data: user,
+      data: {
+        email: user.email,
+        password: user.password,
+        role: user.role as UserEntityRole,
+      },
     });
     return this.mapperFactory.fromEntity(userEntity);
   }

@@ -1,6 +1,19 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+enum UserEntityRole {
+  ADMINISTRATOR
+  PROFESSOR
+  STUDENT
+}
+
+model UserEntity {
+  id       Int            @id @default(autoincrement())
+  email    String         @unique
+  password String
+  role     UserEntityRole
+}
+
 generator client {
   provider = "prisma-client-js"
 }

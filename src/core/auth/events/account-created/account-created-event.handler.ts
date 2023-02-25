@@ -11,7 +11,7 @@ export class AccountCreatedEventHandler
   constructor(
     @Inject(EMAIL_SERVICE) private readonly emailService: IEmailService,
   ) {}
-  handle({ email }: AccountCreatedEvent): void {
-    this.emailService.sendAccountCreatedMail(email);
+  async handle({ email }: AccountCreatedEvent): Promise<void> {
+    await this.emailService.sendAccountCreatedMail(email);
   }
 }

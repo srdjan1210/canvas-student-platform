@@ -13,7 +13,6 @@ export class HashingService implements IHashingService {
 
   async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
-    console.log(salt);
     return bcrypt.hash(password, salt);
   }
 }

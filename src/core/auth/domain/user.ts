@@ -1,5 +1,6 @@
 import { UserRole } from './role.enum';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { AccountCreatedEvent } from '../events/account-created/account-created.event';
 
 export class User extends AggregateRoot {
   private readonly _id: number;
@@ -13,6 +14,10 @@ export class User extends AggregateRoot {
     this._email = email;
     this._password = password;
     this._role = role;
+  }
+
+  createAccount() {
+    this.apply(new AccountCreatedEvent(this.email));
   }
 
   get id() {

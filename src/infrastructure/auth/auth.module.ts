@@ -20,8 +20,11 @@ import { HashingService } from './services/hashing.service';
 import { LoginCommandHandler } from '../../core/auth/application/commands/login/login-command.handler';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { AccountCreatedEvent } from '../../core/auth/events/account-created/account-created.event';
+import { AccountCreatedEventHandler } from '../../core/auth/events/account-created/account-created-event.handler';
 
 const commandHandlers = [CreateUserCommandHandler, LoginCommandHandler];
+const eventHandlers = [AccountCreatedEventHandler];
 
 const providers: Provider[] = [
   {
@@ -40,7 +43,7 @@ const providers: Provider[] = [
   UserEntityMapperFactory,
 ];
 @Module({
-  providers: [...commandHandlers, ...providers],
+  providers: [...commandHandlers, ...providers, ...eventHandlers],
   imports: [
     PrismaModule,
     SharedModule,

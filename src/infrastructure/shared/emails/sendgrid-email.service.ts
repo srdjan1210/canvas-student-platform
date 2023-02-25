@@ -15,6 +15,7 @@ import {
 export class SendgridEmailService implements IEmailService {
   constructor(private readonly configService: ConfigService) {
     const apiKey = configService.get(SENDGRID_API_KEY);
+    console.log(apiKey);
     sendgrid.setApiKey(apiKey);
   }
 

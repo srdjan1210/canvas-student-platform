@@ -1,1 +1,2 @@
 export const EMAIL_SERVICE = 'EMAIL_SERVICE';
+export const STORAGE_SERVICE = 'STORAGE_SERVICE';

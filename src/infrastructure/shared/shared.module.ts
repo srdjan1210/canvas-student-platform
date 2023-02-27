@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common/decorators/modules/module.decorator';
-import { EMAIL_SERVICE } from '../../core/shared/shared.constants';
+import {
+  EMAIL_SERVICE,
+  STORAGE_SERVICE,
+} from '../../core/shared/shared.constants';
 import { SendgridEmailService } from './emails/sendgrid-email.service';
 import { ConfigModule } from '@nestjs/config';
+import { SupabaseStorageService } from './storage/supabase-storage.service';
 
 @Module({
   imports: [ConfigModule],
@@ -10,7 +14,11 @@ import { ConfigModule } from '@nestjs/config';
       provide: EMAIL_SERVICE,
       useClass: SendgridEmailService,
     },
+    {
+      provide: STORAGE_SERVICE,
+      useClass: SupabaseStorageService,
+    },
   ],
-  exports: [EMAIL_SERVICE],
+  exports: [EMAIL_SERVICE, STORAGE_SERVICE],
 })
 export class SharedModule {}

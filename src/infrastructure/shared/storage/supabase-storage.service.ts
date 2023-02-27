@@ -43,9 +43,6 @@ export class SupabaseStorageService implements IStorageService {
   async listFolder(folder: string) {
     const bucket = await this.getMainBucket();
     const result = await bucket.list(folder);
-    result.data.map((res: FileObject) => {
-      console.log(res);
-    });
     return result.data;
   }
 

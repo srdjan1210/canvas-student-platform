@@ -5,7 +5,6 @@ import { HASHING_SERVICE, USER_REPOSITORY } from '../../auth.constants';
 import { IUserRepository } from '../../../domain/interfaces/user-repository.interface';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../domain/user';
-import { Student } from '../../../../specialization/domain/student';
 import { Professor } from '../../../../specialization/domain/professor';
 
 @CommandHandler(RegisterProfessorCommand)

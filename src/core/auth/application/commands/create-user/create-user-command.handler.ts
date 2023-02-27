@@ -1,16 +1,10 @@
-import {
-  CommandHandler,
-  EventBus,
-  EventPublisher,
-  ICommandHandler,
-} from '@nestjs/cqrs';
+import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.command';
 import { HASHING_SERVICE, USER_REPOSITORY } from '../../auth.constants';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { IUserRepository } from '../../../domain/interfaces/user-repository.interface';
 import { User } from '../../../domain/user';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
-import { AccountCreatedEvent } from '../../../events/account-created/account-created.event';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserCommandHandler

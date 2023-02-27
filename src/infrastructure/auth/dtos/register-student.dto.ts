@@ -23,7 +23,7 @@ export class RegisterStudentDto {
   surname: string;
   @IsString()
   @IsNotEmpty()
-  department: string;
+  specialization: string;
   @IsNumber()
   @IsNotEmpty()
   indexNumber: number;

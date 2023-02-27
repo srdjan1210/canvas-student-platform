@@ -4,7 +4,6 @@ import { Body, Post, UseGuards } from '@nestjs/common';
 import { LoginCommand } from '../../core/auth/application/commands/login/login.command';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterStudentDto } from './dtos/register-student.dto';
-import { CreateUserCommand } from '../../core/auth/application/commands/create-user/create-user.command';
 import { UserRole } from '../../core/auth/domain/role.enum';
 import { RegisterProfessorDto } from './dtos/register-professor.dto';
 import { UserRegisteredPresenter } from './presenters/user-registered.presenter';
@@ -12,6 +11,8 @@ import { LoggedInPresenter } from './presenters/logged-in.presenter';
 import { Roles } from './decorators/role.decorator';
 import { JwtGuard } from './guards/jwt.guard';
 import { RoleGuard } from './guards/role.guard';
+import { RegisterProfessorCommand } from '../../core/auth/application/commands/register-professor/register-professor.command';
+import { RegisterStudentCommand } from '../../core/auth/application/commands/register-student/register-student.command';
 
 @Controller('auth')
 export class AuthController {
@@ -25,10 +26,32 @@ export class AuthController {
     return new LoggedInPresenter(token);
   }
 
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/register/student')
-  async registerStudent(@Body() { email, password }: RegisterStudentDto) {
+  async registerStudent(
+    @Body()
+    {
+      email,
+      password,
+      name,
+      surname,
+      indexNumber,
+      year,
+      specialization,
+    }: RegisterStudentDto,
+  ) {
     const user = await this.commandBus.execute(
-      new CreateUserCommand(email, password, UserRole.STUDENT),
+      new RegisterStudentCommand(
+        email,
+        password,
+        UserRole.STUDENT,
+        name,
+        surname,
+        specialization,
+        indexNumber,
+        year,
+      ),
     );
     return new UserRegisteredPresenter(user);
   }
@@ -36,9 +59,18 @@ export class AuthController {
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Post('/register/professor')
-  async registerProfessor(@Body() { email, password }: RegisterProfessorDto) {
+  async registerProfessor(
+    @Body() { email, password, name, surname, title }: RegisterProfessorDto,
+  ) {
     const user = await this.commandBus.execute(
-      new CreateUserCommand(email, password, UserRole.PROFESSOR),
+      new RegisterProfessorCommand(
+        email,
+        password,
+        UserRole.PROFESSOR,
+        name,
+        surname,
+        title,
+      ),
     );
     return new UserRegisteredPresenter(user);
   }

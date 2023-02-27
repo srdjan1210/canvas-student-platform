@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common/interfaces/nest-application.int
 import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class PrismaProvider extends PrismaClient implements OnModuleInit {
+  student: any;
   async onModuleInit() {
     await this.$connect();
   }

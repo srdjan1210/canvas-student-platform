@@ -12,7 +12,7 @@ export class UserEntityMapperFactory
     STUDENT: UserRole.STUDENT,
   };
   fromEntity({ id, email, role, password }: UserEntity): User {
-    return new User(id, email, password, this.userRoles[role]);
+    return new User(id, email, password, this.userRoles[role], null, null);
   }
 
   fromModel({ id, email, role, password }: User) {

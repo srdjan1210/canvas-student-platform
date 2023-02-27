@@ -8,10 +8,42 @@ enum UserEntityRole {
 }
 
 model UserEntity {
-  id       Int            @id @default(autoincrement())
-  email    String         @unique
-  password String
-  role     UserEntityRole
+  id        Int              @id @default(autoincrement())
+  email     String           @unique
+  password  String
+  role      UserEntityRole
+  student   StudentEntity?
+  professor ProfessorEntity?
+}
+
+model StudentEntity {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  surname            String
+  specializationName String
+  specialization     SpecializationEntity @relation(fields: [specializationName], references: [shortName])
+  indexNumber        Int
+  indexYear          Int
+  userId             Int?                 @unique
+  user               UserEntity?          @relation(fields: [userId], references: [id])
+
+  @@unique([specializationName, indexNumber, indexYear])
+}
+
+model ProfessorEntity {
+  id      Int        @id @default(autoincrement())
+  name    String
+  surname String
+  title   String
+  userId  Int        @unique
+  user    UserEntity @relation(fields: [userId], references: [id])
+}
+
+model SpecializationEntity {
+  id        Int             @id @default(autoincrement())
+  name      String
+  shortName String          @unique
+  students  StudentEntity[]
 }
 
 generator client {

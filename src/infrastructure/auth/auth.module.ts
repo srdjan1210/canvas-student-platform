@@ -22,8 +22,15 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AccountCreatedEvent } from '../../core/auth/events/account-created/account-created.event';
 import { AccountCreatedEventHandler } from '../../core/auth/events/account-created/account-created-event.handler';
+import { RegisterProfessorCommandHandler } from '../../core/auth/application/commands/register-professor/register-professor-command.handler';
+import { RegisterStudentCommandHandler } from '../../core/auth/application/commands/register-student/register-student-command.handler';
 
-const commandHandlers = [CreateUserCommandHandler, LoginCommandHandler];
+const commandHandlers = [
+  CreateUserCommandHandler,
+  LoginCommandHandler,
+  RegisterProfessorCommandHandler,
+  RegisterStudentCommandHandler,
+];
 const eventHandlers = [AccountCreatedEventHandler];
 
 const providers: Provider[] = [

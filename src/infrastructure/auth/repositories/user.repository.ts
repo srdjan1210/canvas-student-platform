@@ -36,4 +36,42 @@ export class UserRepository implements IUserRepository {
     });
     return this.mapperFactory.fromEntity(userEntity);
   }
+
+  async createStudent({ email, password, role, student }: User): Promise<User> {
+    const user = await this.prisma.userEntity.create({
+      data: {
+        email,
+        password,
+        role,
+        student: {
+          create: {
+            name: student.name,
+            surname: student.surname,
+            indexYear: student.year,
+            indexNumber: student.indexNumber,
+            specializationName: student.specializationName,
+          },
+        },
+      },
+    });
+    return this.mapperFactory.fromEntity(user);
+  }
+
+  async createProfessor({ email, role, password, professor }: User) {
+    const user = await this.prisma.userEntity.create({
+      data: {
+        email,
+        role,
+        password,
+        professor: {
+          create: {
+            name: professor.name,
+            surname: professor.surname,
+            title: professor.title,
+          },
+        },
+      },
+    });
+    return this.mapperFactory.fromEntity(user);
+  }
 }

@@ -23,7 +23,7 @@ export class CreateUserCommandHandler
   ) {}
   async execute({ email, password, role }: CreateUserCommand): Promise<any> {
     const hashedPassword = await this.hashingService.hashPassword(password);
-    const user: User = new User(null, email, hashedPassword, role);
+    const user: User = new User(null, email, hashedPassword, role, null, null);
     const createdUser = this.eventBus.mergeObjectContext(
       await this.userRepository.create(user),
     );

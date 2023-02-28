@@ -1,4 +1,4 @@
-import { Course } from '../../../core/courses/domain/course';
+import { Course } from '../../../domain/courses/course';
 
 export class CourseCreatedPresenter {
   id: number;

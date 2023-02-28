@@ -1,4 +1,4 @@
-import { IHashingService } from '../../../core/auth/application/interfaces/hashing-service.interfaces';
+import { IHashingService } from '../../../application/auth/interfaces/hashing-service.interfaces';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import * as bcrypt from 'bcrypt';
 

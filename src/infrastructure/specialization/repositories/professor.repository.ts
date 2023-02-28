@@ -1,7 +1,7 @@
-import { IProfessorRepository } from '../../../core/specialization/domain/interfaces/professor-repository.interface';
+import { IProfessorRepository } from '../../../domain/specialization/interfaces/professor-repository.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
-import { PersonDto } from '../../../core/specialization/domain/person.dto';
+import { PersonDto } from '../../../domain/specialization/person.dto';
 
 @Injectable()
 export class ProfessorRepository implements IProfessorRepository {

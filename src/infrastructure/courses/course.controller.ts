@@ -13,16 +13,16 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CourseFileDto } from './dtos/course-file.dto';
-import { UploadCourseFileCommand } from '../../core/courses/application/commands/upload-course-file/upload-course-file.command';
+import { UploadCourseFileCommand } from '../../application/courses/commands/upload-course-file/upload-course-file.command';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { DownloadCourseFileCommand } from '../../core/courses/application/commands/download-course-file/download-course-file.command';
-import { ListCourseFolderQuery } from '../../core/courses/application/queries/list-course-folder/list-course-folder.query';
+import { DownloadCourseFileCommand } from '../../application/courses/commands/download-course-file/download-course-file.command';
+import { ListCourseFolderQuery } from '../../application/courses/queries/list-course-folder/list-course-folder.query';
 import { CreateCourseDto } from './dtos/create-course.dto';
-import { CreateCourseCommand } from '../../core/courses/application/commands/create-course/create-course.command';
+import { CreateCourseCommand } from '../../application/courses/commands/create-course/create-course.command';
 import { CourseCreatedPresenter } from './presenters/course-created.presenter';
 import { AddStudentsToCourseDto } from './dtos/add-students-to-course.dto';
-import { AddStudentsToCourseCommand } from '../../core/courses/application/commands/add-student-to-course/add-students-to-course.command';
-import { AddProfessorsToCourseCommand } from '../../core/courses/application/commands/add-professor-to-course/add-professors-to-course.command';
+import { AddStudentsToCourseCommand } from '../../application/courses/commands/add-student-to-course/add-students-to-course.command';
+import { AddProfessorsToCourseCommand } from '../../application/courses/commands/add-professor-to-course/add-professors-to-course.command';
 import { AddProfessorsToCourseDto } from './dtos/add-professors-to-course.dto';
 
 @Controller('courses')

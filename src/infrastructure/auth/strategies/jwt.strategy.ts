@@ -6,9 +6,9 @@ import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import {
   JWT_SECRET,
   USER_REPOSITORY,
-} from '../../../core/auth/application/auth.constants';
-import { IUserRepository } from '../../../core/auth/domain/interfaces/user-repository.interface';
-import { TokenPayload } from '../../../core/auth/domain/token-payload';
+} from '../../../application/auth/auth.constants';
+import { IUserRepository } from '../../../domain/auth/interfaces/user-repository.interface';
+import { TokenPayload } from '../../../domain/auth/token-payload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

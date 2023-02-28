@@ -3,7 +3,7 @@ import { StudentRepository } from './repositories/student.repository';
 import {
   PROFESSOR_REPOSITORY,
   STUDENT_REPOSITORY,
-} from '../../core/specialization/domain/specialization.constants';
+} from '../../domain/specialization/specialization.constants';
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface';
 import { StudentMapperFactory } from './factories/student-mapper.factory';
 import { ProfessorRepository } from './repositories/professor.repository';

@@ -1,5 +1,5 @@
 import { IStorageService } from '../../../core/shared/interfaces/storage-service.interface';
-import { FileObject, StorageClient } from '@supabase/storage-js';
+import { StorageClient } from '@supabase/storage-js';
 import { ConfigService } from '@nestjs/config';
 import {
   MAIN_BUCKET,

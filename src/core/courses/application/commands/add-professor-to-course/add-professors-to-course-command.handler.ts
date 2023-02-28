@@ -3,8 +3,6 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { COURSE_REPOSITORY } from '../../../domain/course.constants';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { ICourseRepository } from '../../../domain/interfaces/course-repository.interface';
-import { Professor } from '../../../../specialization/domain/professor';
-import { ProfessorRepository } from '../../../../../infrastructure/specialization/repositories/professor.repository';
 import { IProfessorRepository } from '../../../../specialization/domain/interfaces/professor-repository.interface';
 import { PROFESSOR_REPOSITORY } from '../../../../specialization/domain/specialization.constants';
 import { CourseNotFoundException } from '../../exceptions/course-not-found.exception';

@@ -2,7 +2,6 @@ import { IStudentRepository } from '../../../core/specialization/domain/interfac
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { Student } from '../../../core/specialization/domain/student';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
-import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { StudentMapperFactory } from '../factories/student-mapper.factory';
 import { PersonDto } from '../../../core/specialization/domain/person.dto';
 

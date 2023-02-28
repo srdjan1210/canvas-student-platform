@@ -1,19 +1,10 @@
-import {
-  CommandHandler,
-  EventPublisher,
-  ICommand,
-  ICommandHandler,
-} from '@nestjs/cqrs';
+import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { AddStudentsToCourseCommand } from './add-students-to-course.command';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { COURSE_REPOSITORY } from '../../../domain/course.constants';
 import { ICourseRepository } from '../../../domain/interfaces/course-repository.interface';
-import {
-  PROFESSOR_REPOSITORY,
-  STUDENT_REPOSITORY,
-} from '../../../../specialization/domain/specialization.constants';
+import { STUDENT_REPOSITORY } from '../../../../specialization/domain/specialization.constants';
 import { IStudentRepository } from '../../../../specialization/domain/interfaces/student-repository.interface';
-import { IProfessorRepository } from '../../../../specialization/domain/interfaces/professor-repository.interface';
 import { CourseNotFoundException } from '../../exceptions/course-not-found.exception';
 
 @CommandHandler(AddStudentsToCourseCommand)

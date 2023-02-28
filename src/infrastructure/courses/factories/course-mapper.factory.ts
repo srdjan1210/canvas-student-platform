@@ -1,5 +1,5 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
-import { Course } from '../../../core/courses/domain/course';
+import { Course } from '../../../domain/courses/course';
 import { CourseEntity } from '@prisma/client';
 
 export class CourseMapperFactory

@@ -1,18 +1,18 @@
 import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
 import { CommandBus } from '@nestjs/cqrs';
 import { Body, Post, UseGuards } from '@nestjs/common';
-import { LoginCommand } from '../../core/auth/application/commands/login/login.command';
+import { LoginCommand } from '../../application/auth/commands/login/login.command';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterStudentDto } from './dtos/register-student.dto';
-import { UserRole } from '../../core/auth/domain/role.enum';
+import { UserRole } from '../../domain/auth/role.enum';
 import { RegisterProfessorDto } from './dtos/register-professor.dto';
 import { UserRegisteredPresenter } from './presenters/user-registered.presenter';
 import { LoggedInPresenter } from './presenters/logged-in.presenter';
 import { Roles } from './decorators/role.decorator';
 import { JwtGuard } from './guards/jwt.guard';
 import { RoleGuard } from './guards/role.guard';
-import { RegisterProfessorCommand } from '../../core/auth/application/commands/register-professor/register-professor.command';
-import { RegisterStudentCommand } from '../../core/auth/application/commands/register-student/register-student.command';
+import { RegisterProfessorCommand } from '../../application/auth/commands/register-professor/register-professor.command';
+import { RegisterStudentCommand } from '../../application/auth/commands/register-student/register-student.command';
 
 @Controller('auth')
 export class AuthController {

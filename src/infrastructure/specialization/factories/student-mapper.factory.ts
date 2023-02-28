@@ -1,6 +1,6 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
 import { StudentEntity } from '@prisma/client';
-import { Student } from '../../../core/specialization/domain/student';
+import { Student } from '../../../domain/specialization/student';
 
 export class StudentMapperFactory
   implements IEntityMapperFactory<StudentEntity, Student>

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common/decorators/modules/module.decorator';
-import { CreateUserCommandHandler } from '../../core/auth/application/commands/create-user/create-user-command.handler';
+import { CreateUserCommandHandler } from '../../application/auth/commands/create-user/create-user-command.handler';
 import {
   HASHING_SERVICE,
   JWT_EXPIRES_IN,
   JWT_SECRET,
   JWT_SERVICE,
   USER_REPOSITORY,
-} from '../../core/auth/application/auth.constants';
+} from '../../application/auth/auth.constants';
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface';
 import { UserRepository } from './repositories/user.repository';
 import { PrismaModule } from '../persistance/prisma/prisma.module';
@@ -17,12 +17,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JWTService } from './services/jwt.service';
 import { HashingService } from './services/hashing.service';
-import { LoginCommandHandler } from '../../core/auth/application/commands/login/login-command.handler';
+import { LoginCommandHandler } from '../../application/auth/commands/login/login-command.handler';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AccountCreatedEventHandler } from '../../core/auth/events/account-created/account-created-event.handler';
-import { RegisterProfessorCommandHandler } from '../../core/auth/application/commands/register-professor/register-professor-command.handler';
-import { RegisterStudentCommandHandler } from '../../core/auth/application/commands/register-student/register-student-command.handler';
+import { AccountCreatedEventHandler } from '../../application/auth/events/account-created-event.handler';
+import { RegisterProfessorCommandHandler } from '../../application/auth/commands/register-professor/register-professor-command.handler';
+import { RegisterStudentCommandHandler } from '../../application/auth/commands/register-student/register-student-command.handler';
 
 const commandHandlers = [
   CreateUserCommandHandler,

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator'
 import {
   EmailContent,
   IEmailService,
-} from '../../../core/shared/interfaces/email-service.interface';
+} from '../../../application/shared/interfaces/email-service.interface';
 import * as sendgrid from '@sendgrid/mail';
 import { ConfigService } from '@nestjs/config';
 import {

@@ -1,9 +1,9 @@
-import { IStudentRepository } from '../../../core/specialization/domain/interfaces/student-repository.interface';
+import { IStudentRepository } from '../../../domain/specialization/interfaces/student-repository.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { Student } from '../../../core/specialization/domain/student';
+import { Student } from '../../../domain/specialization/student';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { StudentMapperFactory } from '../factories/student-mapper.factory';
-import { PersonDto } from '../../../core/specialization/domain/person.dto';
+import { PersonDto } from '../../../domain/specialization/person.dto';
 
 @Injectable()
 export class StudentRepository implements IStudentRepository {

@@ -1,4 +1,4 @@
-import { User } from '../../../core/auth/domain/user';
+import { User } from '../../../domain/auth/user';
 
 export class UserRegisteredPresenter {
   public readonly email: string;

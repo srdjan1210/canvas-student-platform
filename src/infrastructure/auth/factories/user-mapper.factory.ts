@@ -1,7 +1,7 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
-import { User } from '../../../core/auth/domain/user';
+import { User } from '../../../domain/auth/user';
 import { UserEntity } from '@prisma/client';
-import { UserRole } from '../../../core/auth/domain/role.enum';
+import { UserRole } from '../../../domain/auth/role.enum';
 
 export class UserEntityMapperFactory
   implements IEntityMapperFactory<UserEntity, User>

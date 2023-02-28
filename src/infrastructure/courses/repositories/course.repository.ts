@@ -1,8 +1,8 @@
-import { ICourseRepository } from '../../../core/courses/domain/interfaces/course-repository.interface';
+import { ICourseRepository } from '../../../domain/courses/interfaces/course-repository.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { CourseMapperFactory } from '../factories/course-mapper.factory';
-import { Course } from '../../../core/courses/domain/course';
+import { Course } from '../../../domain/courses/course';
 
 @Injectable()
 export class CourseRepository implements ICourseRepository {

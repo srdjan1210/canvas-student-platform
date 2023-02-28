@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
-import { IUserRepository } from '../../../core/auth/domain/interfaces/user-repository.interface';
-import { User } from '../../../core/auth/domain/user';
+import { IUserRepository } from '../../../domain/auth/interfaces/user-repository.interface';
+import { User } from '../../../domain/auth/user';
 import { UserEntityMapperFactory } from '../factories/user-mapper.factory';
 import { UserEntityRole } from '@prisma/client';
 

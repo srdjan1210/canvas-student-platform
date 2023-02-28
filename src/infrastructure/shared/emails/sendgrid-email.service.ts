@@ -28,6 +28,15 @@ export class SendgridEmailService implements IEmailService {
     await this.sendEmail(content);
   }
 
+  async sendAddedToCourseEmail(email: string, course: string) {
+    const content: EmailContent = {
+      text: this.addedToCourseText(course),
+      subject: this.addedToCourseSubject(course),
+      to: email,
+    };
+    await this.sendEmail(content);
+  }
+
   private async sendEmail({ text, subject, to }: EmailContent) {
     const from = this.configService.get(SENDGRID_SENDER);
     const content: sendgrid.MailDataRequired = {
@@ -38,5 +47,12 @@ export class SendgridEmailService implements IEmailService {
     };
 
     await sendgrid.send(content);
+  }
+
+  private addedToCourseText(course: string) {
+    return `Hello! You have been added to the ${course} course!`;
+  }
+  private addedToCourseSubject(course: string) {
+    return `You've joined ${course}!`;
   }
 }

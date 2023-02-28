@@ -26,17 +26,19 @@ model StudentEntity {
   indexYear          Int
   userId             Int?                 @unique
   user               UserEntity?          @relation(fields: [userId], references: [id])
+  courses            CourseEntity[]
 
   @@unique([specializationName, indexNumber, indexYear])
 }
 
 model ProfessorEntity {
-  id      Int        @id @default(autoincrement())
+  id      Int            @id @default(autoincrement())
   name    String
   surname String
   title   String
-  userId  Int        @unique
-  user    UserEntity @relation(fields: [userId], references: [id])
+  userId  Int            @unique
+  user    UserEntity     @relation(fields: [userId], references: [id])
+  courses CourseEntity[]
 }
 
 model SpecializationEntity {
@@ -44,6 +46,17 @@ model SpecializationEntity {
   name      String
   shortName String          @unique
   students  StudentEntity[]
+  courses   CourseEntity[]
+}
+
+model CourseEntity {
+  id              Int                    @id @default(autoincrement())
+  title           String
+  year            Int
+  espb            Int
+  specializations SpecializationEntity[]
+  students        StudentEntity[]
+  professors      ProfessorEntity[]
 }
 
 generator client {

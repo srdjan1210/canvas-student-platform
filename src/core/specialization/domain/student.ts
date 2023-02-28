@@ -10,7 +10,40 @@ export class Student {
     public readonly userId: number,
     public readonly indexNumber: number,
     public readonly year: number,
-    public readonly specialization: Specialization,
-    public readonly user: User,
+    public readonly specialization: Specialization = null,
+    public readonly user: User = null,
   ) {}
+
+  static create(data: {
+    id?: number;
+    name?: string;
+    surname?: string;
+    userId?: number;
+    specializationName?: string;
+    indexNumber?: number;
+    year?: number;
+    specialization?: Specialization;
+    user?: User;
+  }) {
+    const id = data.id ?? null;
+    const name = data.name ?? null;
+    const surname = data.surname ?? null;
+    const specializationName = data.specializationName ?? null;
+    const indexNumber = data.indexNumber ?? null;
+    const year = data.year ?? null;
+    const userId = data.userId ?? null;
+    const specialization = data.specialization ?? null;
+    const user = data.user ?? null;
+    return new Student(
+      id,
+      name,
+      surname,
+      specializationName,
+      indexNumber,
+      year,
+      userId,
+      specialization,
+      user,
+    );
+  }
 }

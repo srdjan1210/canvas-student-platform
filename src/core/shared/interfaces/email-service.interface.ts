@@ -5,4 +5,5 @@ export type EmailContent = {
 };
 export interface IEmailService {
   sendAccountCreatedMail(email: string);
+  sendAddedToCourseEmail(email: string, course: string);
 }

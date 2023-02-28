@@ -12,8 +12,6 @@ export class ListCourseFolderQueryHandler
     @Inject(STORAGE_SERVICE) private readonly storageService: IStorageService,
   ) {}
   async execute({ folder }: ListCourseFolderQuery): Promise<any> {
-    const result = await this.storageService.listFolder(folder);
-    console.log(result);
-    return result;
+    return await this.storageService.listFolder(folder);
   }
 }

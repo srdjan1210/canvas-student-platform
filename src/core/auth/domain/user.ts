@@ -2,7 +2,7 @@ import { UserRole } from './role.enum';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { Student } from '../../specialization/domain/student';
 import { Professor } from '../../specialization/domain/professor';
-import { AccountCreatedEvent } from '../events/account-created/account-created.event';
+import { AccountCreatedEvent } from './events/account-created.event';
 
 export class User extends AggregateRoot {
   constructor(

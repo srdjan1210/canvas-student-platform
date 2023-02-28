@@ -1,6 +1,8 @@
 import { Student } from '../../specialization/domain/student';
 import { Professor } from '../../specialization/domain/professor';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { PersonAddedToCourseEvent } from './events/person-added-to-course.event';
+import { PersonDto } from '../../specialization/domain/person.dto';
 
 export class Course extends AggregateRoot {
   constructor(
@@ -8,18 +10,26 @@ export class Course extends AggregateRoot {
     public readonly title: string,
     public readonly year: number,
     public readonly espb: number,
-    public readonly students: Student[] = [],
-    public readonly professors: Professor[] = [],
+    public students: Student[] = [],
+    public professors: Professor[] = [],
   ) {
     super();
   }
 
-  addStudents(students: Student[]) {
-    this.students.concat(students);
+  addStudents(studentIds: number[]) {
+    const students = studentIds.map((id) => Student.create({ id }));
+    this.students = [...this.students, ...students];
   }
 
-  addProfessors(professors: Professor[]) {
-    this.professors.concat(professors);
+  addProfessors(professorIds: number[]) {
+    const professors = professorIds.map((id) => Professor.create({ id }));
+    this.professors = [...this.professors, ...professors];
+  }
+
+  greetNewMembers(members: PersonDto[]) {
+    members.forEach((mem) =>
+      this.apply(new PersonAddedToCourseEvent(mem.email, this.title)),
+    );
   }
 
   static create(data: {

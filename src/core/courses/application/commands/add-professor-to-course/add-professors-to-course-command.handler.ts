@@ -5,7 +5,7 @@ import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { ICourseRepository } from '../../../domain/interfaces/course-repository.interface';
 import { IProfessorRepository } from '../../../../specialization/domain/interfaces/professor-repository.interface';
 import { PROFESSOR_REPOSITORY } from '../../../../specialization/domain/specialization.constants';
-import { CourseNotFoundException } from '../../exceptions/course-not-found.exception';
+import { CourseNotFoundException } from '../../../domain/exceptions/course-not-found.exception';
 
 @CommandHandler(AddProfessorsToCourseCommand)
 export class AddProfessorsToCourseCommandHandler

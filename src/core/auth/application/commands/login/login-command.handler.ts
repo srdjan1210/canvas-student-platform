@@ -9,7 +9,7 @@ import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { IJwtService } from '../../interfaces/jwt-service.interface';
 import { IUserRepository } from '../../../domain/interfaces/user-repository.interface';
-import { InvalidCredentialsException } from '../../exceptions/invalid-credentials.exception';
+import { InvalidCredentialsException } from '../../../domain/exceptions/invalid-credentials.exception';
 
 @CommandHandler(LoginCommand)
 export class LoginCommandHandler implements ICommandHandler<LoginCommand> {

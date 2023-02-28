@@ -5,7 +5,7 @@ import { COURSE_REPOSITORY } from '../../../domain/course.constants';
 import { ICourseRepository } from '../../../domain/interfaces/course-repository.interface';
 import { STUDENT_REPOSITORY } from '../../../../specialization/domain/specialization.constants';
 import { IStudentRepository } from '../../../../specialization/domain/interfaces/student-repository.interface';
-import { CourseNotFoundException } from '../../exceptions/course-not-found.exception';
+import { CourseNotFoundException } from '../../../domain/exceptions/course-not-found.exception';
 
 @CommandHandler(AddStudentsToCourseCommand)
 export class AddStudentsToCourseCommandHandler

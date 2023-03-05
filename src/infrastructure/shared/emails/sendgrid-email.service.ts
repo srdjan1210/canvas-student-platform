@@ -11,6 +11,7 @@ import {
   SENDGRID_API_KEY,
   SENDGRID_SENDER,
 } from './email.constants';
+import { Announcement } from '../../../domain/courses/announcement';
 @Injectable()
 export class SendgridEmailService implements IEmailService {
   constructor(private readonly configService: ConfigService) {
@@ -35,6 +36,19 @@ export class SendgridEmailService implements IEmailService {
       to: email,
     };
     await this.sendEmail(content);
+  }
+
+  async sendAnnouncementEmail(emails: string[], announcement: Announcement) {
+    await Promise.all(
+      emails.map(async (email) => {
+        const content: EmailContent = {
+          text: announcement.body,
+          subject: announcement.title,
+          to: email,
+        };
+        await this.sendEmail(content);
+      }),
+    );
   }
 
   private async sendEmail({ text, subject, to }: EmailContent) {

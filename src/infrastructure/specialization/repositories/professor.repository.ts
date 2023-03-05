@@ -2,10 +2,15 @@ import { IProfessorRepository } from '../../../domain/specialization/interfaces/
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { PersonDto } from '../../../domain/specialization/person.dto';
+import { Professor } from '../../../domain/specialization/model/professor';
+import { ProfessorMapperFactory } from '../../courses/factories/professor-mapper.factory';
 
 @Injectable()
 export class ProfessorRepository implements IProfessorRepository {
-  constructor(private readonly prisma: PrismaProvider) {}
+  constructor(
+    private readonly prisma: PrismaProvider,
+    private readonly professorMapperFactory: ProfessorMapperFactory,
+  ) {}
   async findPersonalInfos(professorIds: number[]): Promise<PersonDto[]> {
     const professors = await this.prisma.professorEntity.findMany({
       where: {
@@ -23,5 +28,12 @@ export class ProfessorRepository implements IProfessorRepository {
     return professors.map(
       (p) => new PersonDto(p.id, p.name, p.surname, p.user.email),
     );
+  }
+
+  async findById(id: number): Promise<Professor> {
+    const professor = await this.prisma.professorEntity.findUnique({
+      where: { id },
+    });
+    return this.professorMapperFactory.fromEntity(professor);
   }
 }

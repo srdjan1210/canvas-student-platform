@@ -5,7 +5,9 @@ import { HASHING_SERVICE, USER_REPOSITORY } from '../../auth.constants';
 import { IUserRepository } from '../../../../domain/auth/interfaces/user-repository.interface';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../../domain/auth/user';
-import { Professor } from '../../../../domain/specialization/professor';
+import { Professor } from '../../../../domain/specialization/model/professor';
+import { ProfessorFactory } from '../../../../domain/specialization/factories/professor.factory';
+import { UserFactory } from '../../../../domain/auth/user.factory';
 
 @CommandHandler(RegisterProfessorCommand)
 export class RegisterProfessorCommandHandler
@@ -25,15 +27,13 @@ export class RegisterProfessorCommandHandler
     name,
   }: RegisterProfessorCommand): Promise<User> {
     const hashedPassword = await this.hashingService.hashPassword(password);
-    const professor = new Professor(null, name, surname, title);
-    const user: User = new User(
-      null,
+    const professor = ProfessorFactory.create({ name, surname, title });
+    const user: User = UserFactory.create({
       email,
-      hashedPassword,
+      password: hashedPassword,
       role,
-      null,
       professor,
-    );
+    });
 
     const createdUser = this.eventBus.mergeObjectContext(
       await this.userRepository.createProfessor(user),

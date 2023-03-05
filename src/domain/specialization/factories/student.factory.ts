@@ -1,19 +1,8 @@
-import { Specialization } from './specialization';
-import { User } from '../auth/user';
+import { Specialization } from '../model/specialization';
+import { User } from '../../auth/user';
+import { Student } from '../model/student';
 
-export class Student {
-  constructor(
-    public readonly id: number,
-    public readonly name: string,
-    public readonly surname: string,
-    public readonly specializationName: string,
-    public readonly userId: number,
-    public readonly indexNumber: number,
-    public readonly year: number,
-    public readonly specialization: Specialization = null,
-    public readonly user: User = null,
-  ) {}
-
+export class StudentFactory {
   static create(data: {
     id?: number;
     name?: string;

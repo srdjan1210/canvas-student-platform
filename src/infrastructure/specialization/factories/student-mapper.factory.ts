@@ -1,9 +1,23 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
-import { StudentEntity } from '@prisma/client';
-import { Student } from '../../../domain/specialization/student';
+import {
+  SpecializationEntity,
+  StudentEntity,
+  UserEntity,
+} from '@prisma/client';
+import { Student } from '../../../domain/specialization/model/student';
+import { Specialization } from '../../../domain/specialization/model/specialization';
+import { User } from '../../../domain/auth/user';
+import { UserRole } from '../../../domain/auth/role.enum';
 
 export class StudentMapperFactory
-  implements IEntityMapperFactory<StudentEntity, Student>
+  implements
+    IEntityMapperFactory<
+      StudentEntity & {
+        user?: UserEntity;
+        specialization?: SpecializationEntity;
+      },
+      Student
+    >
 {
   fromEntity({
     id,
@@ -13,7 +27,12 @@ export class StudentMapperFactory
     indexNumber,
     indexYear,
     userId,
-  }: StudentEntity): Student {
+    specialization,
+    user,
+  }: StudentEntity & {
+    user?: UserEntity;
+    specialization?: SpecializationEntity;
+  }): Student {
     return new Student(
       id,
       name,
@@ -22,6 +41,16 @@ export class StudentMapperFactory
       userId,
       indexNumber,
       indexYear,
+      specialization
+        ? new Specialization(
+            specialization.id,
+            specialization.shortName,
+            specialization.name,
+          )
+        : null,
+      user
+        ? new User(user.id, user.email, user.password, UserRole.STUDENT)
+        : null,
     );
   }
 
@@ -33,7 +62,10 @@ export class StudentMapperFactory
     userId,
     indexNumber,
     year: indexYear,
-  }: Student): StudentEntity {
+  }: Student): StudentEntity & {
+    user?: UserEntity;
+    specialization?: SpecializationEntity;
+  } {
     return {
       id,
       name,

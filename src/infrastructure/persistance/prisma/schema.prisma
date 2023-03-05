@@ -32,13 +32,14 @@ model StudentEntity {
 }
 
 model ProfessorEntity {
-  id      Int            @id @default(autoincrement())
-  name    String
-  surname String
-  title   String
-  userId  Int            @unique
-  user    UserEntity     @relation(fields: [userId], references: [id])
-  courses CourseEntity[]
+  id            Int                  @id @default(autoincrement())
+  name          String
+  surname       String
+  title         String
+  userId        Int                  @unique
+  user          UserEntity           @relation(fields: [userId], references: [id])
+  courses       CourseEntity[]
+  announcements AnnouncementEntity[]
 }
 
 model SpecializationEntity {
@@ -51,12 +52,23 @@ model SpecializationEntity {
 
 model CourseEntity {
   id              Int                    @id @default(autoincrement())
-  title           String
+  title           String                 @unique
   year            Int
   espb            Int
   specializations SpecializationEntity[]
   students        StudentEntity[]
   professors      ProfessorEntity[]
+  announcements   AnnouncementEntity[]
+}
+
+model AnnouncementEntity {
+  id          Int             @id @default(autoincrement())
+  title       String
+  body        String
+  courseId    Int
+  professorId Int
+  course      CourseEntity    @relation(fields: [courseId], references: [id])
+  professor   ProfessorEntity @relation(fields: [professorId], references: [id])
 }
 
 generator client {

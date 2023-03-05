@@ -1,7 +1,7 @@
 import { UserRole } from './role.enum';
 import { AggregateRoot } from '@nestjs/cqrs';
-import { Student } from '../specialization/student';
-import { Professor } from '../specialization/professor';
+import { Student } from '../specialization/model/student';
+import { Professor } from '../specialization/model/professor';
 import { AccountCreatedEvent } from './events/account-created.event';
 
 export class User extends AggregateRoot {
@@ -10,8 +10,8 @@ export class User extends AggregateRoot {
     public readonly email: string,
     public readonly password: string,
     public readonly role: UserRole,
-    public readonly student: Student,
-    public readonly professor: Professor,
+    public readonly student: Student = null,
+    public readonly professor: Professor = null,
   ) {
     super();
   }

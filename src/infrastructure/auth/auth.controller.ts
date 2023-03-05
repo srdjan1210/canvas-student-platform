@@ -56,8 +56,6 @@ export class AuthController {
     return new UserRegisteredPresenter(user);
   }
 
-  @Roles(UserRole.ADMINISTRATOR)
-  @UseGuards(JwtGuard, RoleGuard)
   @Post('/register/professor')
   async registerProfessor(
     @Body() { email, password, name, surname, title }: RegisterProfessorDto,

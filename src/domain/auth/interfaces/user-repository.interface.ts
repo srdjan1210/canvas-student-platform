@@ -5,5 +5,6 @@ export interface IUserRepository {
   createProfessor(user: User): Promise<User>;
   createStudent(user: User): Promise<User>;
   findById(id: number): Promise<User>;
+  findByIdPopulated(id: number): Promise<User>;
   findByEmail(email: string): Promise<User>;
 }

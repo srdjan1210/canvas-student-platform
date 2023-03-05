@@ -1,8 +1,11 @@
-import { Student } from '../specialization/student';
-import { Professor } from '../specialization/professor';
+import { Student } from '../specialization/model/student';
+import { Professor } from '../specialization/model/professor';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { PersonAddedToCourseEvent } from './events/person-added-to-course.event';
 import { PersonDto } from '../specialization/person.dto';
+import { Announcement } from './announcement';
+import { StudentFactory } from '../specialization/factories/student.factory';
+import { ProfessorFactory } from '../specialization/factories/professor.factory';
 
 export class Course extends AggregateRoot {
   constructor(
@@ -12,17 +15,21 @@ export class Course extends AggregateRoot {
     public readonly espb: number,
     public students: Student[] = [],
     public professors: Professor[] = [],
+    public announcements: Announcement[] = [],
   ) {
     super();
   }
 
   addStudents(studentIds: number[]) {
-    const students = studentIds.map((id) => Student.create({ id }));
+    console.log(studentIds);
+    const students = studentIds.map((id) => StudentFactory.create({ id }));
     this.students = [...this.students, ...students];
   }
 
   addProfessors(professorIds: number[]) {
-    const professors = professorIds.map((id) => Professor.create({ id }));
+    const professors = professorIds.map((id) =>
+      ProfessorFactory.create({ id }),
+    );
     this.professors = [...this.professors, ...professors];
   }
 
@@ -32,20 +39,7 @@ export class Course extends AggregateRoot {
     );
   }
 
-  static create(data: {
-    id?: number;
-    title?: string;
-    year?: number;
-    espb?: number;
-    students: Student[];
-    professors: Professor[];
-  }): Course {
-    const id = data.id ?? null;
-    const title = data.title ?? null;
-    const year = data.year ?? null;
-    const espb = data.espb ?? null;
-    const students = data.students ?? [];
-    const professors = data.professors ?? [];
-    return new Course(id, title, year, espb, students, professors);
+  addAnnouncement(announcement: Announcement) {
+    this.announcements.push(announcement);
   }
 }

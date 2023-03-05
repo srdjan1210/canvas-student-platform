@@ -36,6 +36,7 @@ export class CourseRepository implements ICourseRepository {
     espb,
     professors,
     students,
+    announcements,
   }: Course): Promise<void> {
     await this.prisma.courseEntity.update({
       data: {
@@ -52,10 +53,40 @@ export class CourseRepository implements ICourseRepository {
             id: s.id,
           })),
         },
+        announcements: {
+          create: announcements.map((a) => ({
+            title: a.title,
+            body: a.body,
+            professorId: a.professorId,
+          })),
+        },
       },
       where: {
         id,
       },
     });
+  }
+
+  async findByIdIncluding(
+    id: number,
+    including: { professors: boolean; students: boolean },
+  ): Promise<Course> {
+    const course = await this.prisma.courseEntity.findUnique({
+      where: { id },
+      include: {
+        professors: including.professors,
+        students: including.students,
+      },
+    });
+    return this.courseMapperFactory.fromEntity(course);
+  }
+
+  async findByTitle(title: string): Promise<Course> {
+    const course = await this.prisma.courseEntity.findUnique({
+      where: {
+        title,
+      },
+    });
+    return this.courseMapperFactory.fromEntity(course);
   }
 }

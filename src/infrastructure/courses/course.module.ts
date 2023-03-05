@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common/decorators/modules/module.decorator';
-import { CourseController } from './course.controller';
+import { CourseController } from './controllers/course.controller';
 import { UploadCourseFileCommandHandler } from '../../application/courses/commands/upload-course-file/upload-course-file-command.handler';
 import { SharedModule } from '../shared/shared.module';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -14,6 +14,9 @@ import { COURSE_REPOSITORY } from '../../domain/courses/course.constants';
 import { CourseRepository } from './repositories/course.repository';
 import { SpecializationModule } from '../specialization/specialization.module';
 import { CourseMapperFactory } from './factories/course-mapper.factory';
+import { CourseFactory } from '../../domain/courses/course.factory';
+import { AddAnnouncementCommandHandler } from '../../application/courses/commands/add-announcement/add-announcement-command.handler';
+import { AnnouncementCreatedEventHandler } from '../../application/courses/events/announcement-created-event.handler';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -21,21 +24,25 @@ const commands = [
   CreateCourseCommandHandler,
   AddStudentsToCourseCommandHandler,
   AddProfessorsToCourseCommandHandler,
+  AddAnnouncementCommandHandler,
 ];
 
 const queries = [ListCourseFolderQueryHandler];
+
+const events = [AnnouncementCreatedEventHandler];
 
 const providers: Provider[] = [
   {
     provide: COURSE_REPOSITORY,
     useClass: CourseRepository,
   },
+  CourseFactory,
   CourseMapperFactory,
 ];
 
 @Module({
   controllers: [CourseController],
-  providers: [...commands, ...queries, ...providers],
+  providers: [...commands, ...queries, ...events, ...providers],
   imports: [SharedModule, CqrsModule, PrismaModule, SpecializationModule],
 })
 export class CourseModule {}

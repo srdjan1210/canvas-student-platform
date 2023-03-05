@@ -1,6 +1,6 @@
 import { IStudentRepository } from '../../../domain/specialization/interfaces/student-repository.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { Student } from '../../../domain/specialization/student';
+import { Student } from '../../../domain/specialization/model/student';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { StudentMapperFactory } from '../factories/student-mapper.factory';
 import { PersonDto } from '../../../domain/specialization/person.dto';
@@ -35,5 +35,21 @@ export class StudentRepository implements IStudentRepository {
     return students.map(
       (s) => new PersonDto(s.id, s.name, s.surname, s.user.email),
     );
+  }
+
+  async findAllForCourse(courseId: number): Promise<Student[]> {
+    const course = await this.prisma.courseEntity.findUnique({
+      where: {
+        id: courseId,
+      },
+      select: {
+        students: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return course.students.map((s) => this.studentMapperFactory.fromEntity(s));
   }
 }

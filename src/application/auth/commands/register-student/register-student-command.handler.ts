@@ -5,7 +5,8 @@ import { HASHING_SERVICE, USER_REPOSITORY } from '../../auth.constants';
 import { IUserRepository } from '../../../../domain/auth/interfaces/user-repository.interface';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../../domain/auth/user';
-import { Student } from '../../../../domain/specialization/student';
+import { Student } from '../../../../domain/specialization/model/student';
+import { UserFactory } from '../../../../domain/auth/user.factory';
 
 @CommandHandler(RegisterStudentCommand)
 export class RegisterStudentCommandHandler
@@ -38,14 +39,12 @@ export class RegisterStudentCommandHandler
       null,
       null,
     );
-    const user: User = new User(
-      null,
+    const user: User = UserFactory.create({
       email,
-      hashedPassword,
+      password: hashedPassword,
       role,
       student,
-      null,
-    );
+    });
 
     const createdUser = this.eventBus.mergeObjectContext(
       await this.userRepository.createStudent(user),

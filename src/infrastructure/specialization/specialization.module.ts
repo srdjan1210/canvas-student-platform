@@ -9,6 +9,9 @@ import { StudentMapperFactory } from './factories/student-mapper.factory';
 import { ProfessorRepository } from './repositories/professor.repository';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '../persistance/prisma/prisma.module';
+import { ProfessorMapperFactory } from '../courses/factories/professor-mapper.factory';
+import { StudentFactory } from '../../domain/specialization/factories/student.factory';
+import { ProfessorFactory } from '../../domain/specialization/factories/professor.factory';
 
 const providers: Provider[] = [
   {
@@ -20,6 +23,9 @@ const providers: Provider[] = [
     useClass: ProfessorRepository,
   },
   StudentMapperFactory,
+  StudentFactory,
+  ProfessorFactory,
+  ProfessorMapperFactory,
 ];
 @Module({
   imports: [CqrsModule, PrismaModule],

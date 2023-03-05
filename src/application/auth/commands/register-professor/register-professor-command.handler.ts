@@ -5,7 +5,6 @@ import { HASHING_SERVICE, USER_REPOSITORY } from '../../auth.constants';
 import { IUserRepository } from '../../../../domain/auth/interfaces/user-repository.interface';
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../../domain/auth/user';
-import { Professor } from '../../../../domain/specialization/model/professor';
 import { ProfessorFactory } from '../../../../domain/specialization/factories/professor.factory';
 import { UserFactory } from '../../../../domain/auth/user.factory';
 

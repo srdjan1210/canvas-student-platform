@@ -1,8 +1,6 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
 import { Course } from '../../../domain/courses/course';
 import { CourseEntity, ProfessorEntity, StudentEntity } from '@prisma/client';
-import { Student } from '../../../domain/specialization/model/student';
-import { Professor } from '../../../domain/specialization/model/professor';
 import { StudentFactory } from '../../../domain/specialization/factories/student.factory';
 import { ProfessorFactory } from '../../../domain/specialization/factories/professor.factory';
 

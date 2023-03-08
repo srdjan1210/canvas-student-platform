@@ -19,11 +19,12 @@ export class UploadCourseFileCommandHandler
   ) {}
   async execute({
     professorId,
-    courseId,
+    folder,
     filename,
     file,
   }: UploadCourseFileCommand): Promise<any> {
-    const course = await this.courseRepository.findByIdIncluding(courseId, {
+    const title = folder.split('/')[0];
+    const course = await this.courseRepository.findByTitleIncluding(title, {
       professors: true,
     });
 
@@ -31,6 +32,6 @@ export class UploadCourseFileCommandHandler
     if (!course.professors.some((p) => p.id == professorId))
       throw new ProfessorNotInCourseException();
 
-    return await this.storageService.uploadFile(file, course.title, filename);
+    return await this.storageService.uploadFile(file, folder, filename);
   }
 }

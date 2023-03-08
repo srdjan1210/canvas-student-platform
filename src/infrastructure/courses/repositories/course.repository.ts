@@ -89,4 +89,46 @@ export class CourseRepository implements ICourseRepository {
     });
     return this.courseMapperFactory.fromEntity(course);
   }
+
+  async findAllByStudent(studentId: number): Promise<Course[]> {
+    const courses = await this.prisma.courseEntity.findMany({
+      where: {
+        students: {
+          some: {
+            id: studentId,
+          },
+        },
+      },
+    });
+
+    return courses.map((course) => this.courseMapperFactory.fromEntity(course));
+  }
+
+  async findByTitleIncluding(
+    title: string,
+    including: { professors?: boolean; students?: boolean },
+  ) {
+    const course = await this.prisma.courseEntity.findUnique({
+      where: { title },
+      include: {
+        professors: including.professors,
+        students: including.students,
+      },
+    });
+    return this.courseMapperFactory.fromEntity(course);
+  }
+
+  async findAllByProfessor(professorId: number): Promise<Course[]> {
+    const courses = await this.prisma.courseEntity.findMany({
+      where: {
+        professors: {
+          some: {
+            id: professorId,
+          },
+        },
+      },
+    });
+
+    return courses.map((course) => this.courseMapperFactory.fromEntity(course));
+  }
 }

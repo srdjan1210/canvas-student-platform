@@ -7,4 +7,7 @@ export class CreateCourseDto {
   year: number;
   @IsNumber()
   espb: number;
+
+  @IsString()
+  description: string;
 }

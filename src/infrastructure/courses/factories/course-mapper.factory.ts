@@ -29,16 +29,18 @@ export class CourseMapperFactory
       entity.title,
       entity.year,
       entity.espb,
+      entity.description,
       studentsMapped,
       professorsMapped,
     );
   }
-  fromModel({ id, title, year, espb }: Course) {
+  fromModel({ id, title, year, espb, description }: Course) {
     return {
       id,
       title,
       year,
       espb,
+      description,
     };
   }
 

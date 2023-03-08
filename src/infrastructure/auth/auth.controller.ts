@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
 import { CommandBus } from '@nestjs/cqrs';
-import { Body, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { LoginCommand } from '../../application/auth/commands/login/login.command';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterStudentDto } from './dtos/register-student.dto';
@@ -10,9 +10,10 @@ import { UserRegisteredPresenter } from './presenters/user-registered.presenter'
 import { LoggedInPresenter } from './presenters/logged-in.presenter';
 import { Roles } from './decorators/role.decorator';
 import { JwtGuard } from './guards/jwt.guard';
-import { RoleGuard } from './guards/role.guard';
+import { ReqWithUser, RoleGuard } from './guards/role.guard';
 import { RegisterProfessorCommand } from '../../application/auth/commands/register-professor/register-professor.command';
 import { RegisterStudentCommand } from '../../application/auth/commands/register-student/register-student.command';
+import { ProfilePresenter } from './presenters/profile.presenter';
 
 @Controller('auth')
 export class AuthController {
@@ -71,5 +72,12 @@ export class AuthController {
       ),
     );
     return new UserRegisteredPresenter(user);
+  }
+
+  @Roles(UserRole.PROFESSOR, UserRole.STUDENT, UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/me')
+  async getProfile(@Req() { user }: ReqWithUser) {
+    return new ProfilePresenter(user);
   }
 }

@@ -14,8 +14,13 @@ export class CreateCourseCommandHandler
     private readonly courseRepository: ICourseRepository,
     private readonly eventBus: EventPublisher,
   ) {}
-  async execute({ title, year, espb }: CreateCourseCommand): Promise<Course> {
-    const course = new Course(null, title, year, espb);
+  async execute({
+    title,
+    year,
+    espb,
+    description,
+  }: CreateCourseCommand): Promise<Course> {
+    const course = new Course(null, title, year, espb, description);
     return await this.courseRepository.create(course);
   }
 }

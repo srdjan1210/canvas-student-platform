@@ -16,13 +16,10 @@ export class DownloadCourseFileCommandHandler
     @Inject(COURSE_REPOSITORY)
     private readonly courseRepository: ICourseRepository,
   ) {}
-  async execute({
-    folder,
-    file,
-  }: DownloadCourseFileCommand): Promise<ReadableStream<Uint8Array>> {
+  async execute({ folder, file }: DownloadCourseFileCommand): Promise<string> {
     const url = `${folder}/${file}`;
     const course = await this.courseRepository.findByTitle(folder);
     if (!course) throw new CourseNotFoundException();
-    return this.storageService.downloadFile(url);
+    return await this.storageService.getSignedDownloadLink(url);
   }
 }

@@ -26,9 +26,16 @@ export class NotificationGateway {
   }
   @OnEvent('announcement.created')
   handleAnnouncementCreated({ ids, notification }: AnnouncementCreatedPayload) {
-    console.log(ids, notification);
     this.connections.forEach((value: number, key: Socket) => {
-      if (ids.includes(value)) key.emit('notification', notification);
+      console.log(ids, value);
+      if (ids.includes(value))
+        key.emit('notification', {
+          id: notification.id,
+          body: notification.body,
+          title: notification.title,
+          professorName: notification.professor.name,
+          professorSurname: notification.professor.surname,
+        });
     });
   }
 }

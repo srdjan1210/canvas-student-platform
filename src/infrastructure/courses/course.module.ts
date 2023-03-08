@@ -17,6 +17,9 @@ import { CourseMapperFactory } from './factories/course-mapper.factory';
 import { CourseFactory } from '../../domain/courses/course.factory';
 import { AddAnnouncementCommandHandler } from '../../application/courses/commands/add-announcement/add-announcement-command.handler';
 import { AnnouncementCreatedEventHandler } from '../../application/courses/events/announcement-created-event.handler';
+import { GetStudentCoursesQueryHandler } from '../../application/courses/queries/get-student-courses/get-student-courses-query.handler';
+import { CreateFolderCommandHandler } from '../../application/courses/commands/create-folder/create-folder-command.handler';
+import { GetProfessorCorusesQueryHandler } from '../../application/courses/queries/get-professor-courses/get-professor-coruses-query.handler';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -25,9 +28,14 @@ const commands = [
   AddStudentsToCourseCommandHandler,
   AddProfessorsToCourseCommandHandler,
   AddAnnouncementCommandHandler,
+  CreateFolderCommandHandler,
 ];
 
-const queries = [ListCourseFolderQueryHandler];
+const queries = [
+  ListCourseFolderQueryHandler,
+  GetStudentCoursesQueryHandler,
+  GetProfessorCorusesQueryHandler,
+];
 
 const events = [AnnouncementCreatedEventHandler];
 

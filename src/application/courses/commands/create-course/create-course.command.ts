@@ -3,5 +3,6 @@ export class CreateCourseCommand {
     public readonly title: string,
     public readonly year: number,
     public readonly espb: number,
+    public readonly description: string,
   ) {}
 }

@@ -13,6 +13,7 @@ export class Course extends AggregateRoot {
     public readonly title: string,
     public readonly year: number,
     public readonly espb: number,
+    public readonly description: string,
     public students: Student[] = [],
     public professors: Professor[] = [],
     public announcements: Announcement[] = [],

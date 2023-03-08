@@ -8,6 +8,7 @@ import {
   ParseFilePipe,
   ParseIntPipe,
   Post,
+  Put,
   Req,
   StreamableFile,
   UploadedFile,
@@ -33,6 +34,13 @@ import { AddAnnouncementCommand } from '../../../application/courses/commands/ad
 import { UserRole } from '../../../domain/auth/role.enum';
 import { Roles } from '../../auth/decorators/role.decorator';
 import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { GetStudentCoursesQuery } from '../../../application/courses/queries/get-student-courses/get-student-courses.query';
+import { CoursePresenter } from '../presenters/course.presenter';
+import { DownloadLinkPresenter } from '../presenters/download-link.presenter';
+import { CourseFilePresenter } from '../presenters/course-file.presenter';
+import { CreateFolderCommand } from '../../../application/courses/commands/create-folder/create-folder.command';
+import { GetProfessorCoursesQuery } from '../../../application/courses/queries/get-professor-courses/get-professor-courses.query';
+import { FileExtensionValidator } from '../validators/file-extension.validator';
 
 @Controller('courses')
 export class CourseController {
@@ -44,26 +52,27 @@ export class CourseController {
   @Roles(UserRole.PROFESSOR)
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('/:id/upload/file')
+  @Put('folder/:folder/upload/file')
   async uploadCourseFile(
-    @Body() { filename }: CourseFileDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: 'pdf' }),
-          new MaxFileSizeValidator({ maxSize: 200000000 }),
+          new FileExtensionValidator({
+            regex: /\.(pdf|txt|ppt|xsl|java|ts|js|json)$/,
+          }),
+          new MaxFileSizeValidator({ maxSize: 100000000 }),
         ],
       }),
     )
     file: Express.Multer.File,
     @Req() { user }: ReqWithUser,
-    @Param('id', ParseIntPipe) courseId: number,
+    @Param('folder') folder: string,
   ) {
     return await this.commandBus.execute(
       new UploadCourseFileCommand(
         user.professor.id,
-        courseId,
-        filename,
+        folder,
+        file.originalname,
         file.buffer,
       ),
     );
@@ -75,22 +84,34 @@ export class CourseController {
     @Param('folder') folder: string,
     @Param('file') file: string,
   ) {
-    const downloaded = await this.commandBus.execute(
+    const downloadLink = await this.commandBus.execute(
       new DownloadCourseFileCommand(folder, file),
     );
-    return new StreamableFile(downloaded);
+    return new DownloadLinkPresenter(downloadLink);
   }
 
   @UseGuards(JwtGuard)
   @Get('/list/folder/:folder')
   async listFolder(@Param('folder') folder: string) {
-    return await this.queryBus.execute(new ListCourseFolderQuery(folder));
+    const files = await this.queryBus.execute(
+      new ListCourseFolderQuery(folder),
+    );
+
+    if (!files) return [];
+    return files.map((file) => new CourseFilePresenter(file));
   }
 
   @UseGuards(JwtGuard)
   @Get('/list/folder')
   async listRoot() {
     return await this.queryBus.execute(new ListCourseFolderQuery(''));
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/folder/:folder')
+  async createFolder(@Param('folder') folder: string) {
+    await this.commandBus.execute(new CreateFolderCommand(folder));
+    return { status: 'SUCCESS' };
   }
 
   @Roles(UserRole.ADMINISTRATOR)
@@ -109,9 +130,11 @@ export class CourseController {
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Post('/')
-  async createCourse(@Body() { title, year, espb }: CreateCourseDto) {
+  async createCourse(
+    @Body() { title, year, espb, description }: CreateCourseDto,
+  ) {
     const course = await this.commandBus.execute(
-      new CreateCourseCommand(title, year, espb),
+      new CreateCourseCommand(title, year, espb, description),
     );
     return new CourseCreatedPresenter(course);
   }
@@ -141,5 +164,26 @@ export class CourseController {
       new AddAnnouncementCommand(title, body, user.professor.id, courseId),
     );
     return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.STUDENT)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/student')
+  async getStudentCourses(@Req() { user }: ReqWithUser) {
+    const courses = await this.queryBus.execute(
+      new GetStudentCoursesQuery(user.student.id),
+    );
+
+    return courses.map((course) => new CoursePresenter(course));
+  }
+  @Roles(UserRole.PROFESSOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/professor')
+  async getProfessorCourses(@Req() { user }: ReqWithUser) {
+    const courses = await this.queryBus.execute(
+      new GetProfessorCoursesQuery(user.professor.id),
+    );
+
+    return courses.map((course) => new CoursePresenter(course));
   }
 }

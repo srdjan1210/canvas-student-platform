@@ -8,6 +8,7 @@ export class CourseFactory {
     title?: string;
     year?: number;
     espb?: number;
+    description?: string;
     students: Student[];
     professors: Professor[];
   }): Course {
@@ -15,8 +16,9 @@ export class CourseFactory {
     const title = data.title ?? null;
     const year = data.year ?? null;
     const espb = data.espb ?? null;
+    const description = data.description ?? '';
     const students = data.students ?? [];
     const professors = data.professors ?? [];
-    return new Course(id, title, year, espb, students, professors);
+    return new Course(id, title, year, espb, description, students, professors);
   }
 }

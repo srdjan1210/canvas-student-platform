@@ -55,6 +55,7 @@ model CourseEntity {
   title           String                 @unique
   year            Int
   espb            Int
+  description     String                 @default("")
   specializations SpecializationEntity[]
   students        StudentEntity[]
   professors      ProfessorEntity[]

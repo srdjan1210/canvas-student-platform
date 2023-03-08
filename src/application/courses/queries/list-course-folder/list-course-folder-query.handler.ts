@@ -17,7 +17,8 @@ export class ListCourseFolderQueryHandler
     private readonly courseRepository: ICourseRepository,
   ) {}
   async execute({ folder }: ListCourseFolderQuery): Promise<any> {
-    const course = await this.courseRepository.findByTitle(folder);
+    const courseTitle = folder.split('/')[0];
+    const course = await this.courseRepository.findByTitle(courseTitle);
     if (!course && folder != '') throw new CourseNotFoundException();
     //TODO: Check if user is enrolled to course(professor, student)
     return await this.storageService.listFolder(folder);

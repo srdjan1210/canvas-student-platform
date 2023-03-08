@@ -15,12 +15,17 @@ export class SupabaseStorageService implements IStorageService {
   constructor(private readonly configService: ConfigService) {
     const storageUrl = configService.get(STORAGE_URL);
     const apiKey = configService.get(STORAGE_API_KEY);
-    console.log(storageUrl, apiKey);
 
     this.client = new StorageClient(storageUrl, {
       apikey: apiKey,
       Authorization: `Bearer ${apiKey}`,
     });
+  }
+
+  async getSignedDownloadLink(path: string): Promise<string> {
+    const bucket = await this.getMainBucket();
+    const resp = await bucket.createSignedUrl(path, 36000, { download: true });
+    return resp.data.signedUrl;
   }
   async uploadFile(
     file: Buffer,
@@ -44,6 +49,14 @@ export class SupabaseStorageService implements IStorageService {
     const bucket = await this.getMainBucket();
     const result = await bucket.list(folder);
     return result.data;
+  }
+
+  async createFolder(folder: string): Promise<string> {
+    const bucket = await this.getMainBucket();
+    const path = `${folder}/placeholder.txt`;
+    const resp = await bucket.upload(path, 'temp');
+    if (resp.error) throw new BadRequestException();
+    return resp.data.path;
   }
 
   private getMainBucket() {

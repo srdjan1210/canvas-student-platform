@@ -29,6 +29,7 @@ export class StudentMapperFactory
     userId,
     specialization,
     user,
+    fullIndex,
   }: StudentEntity & {
     user?: UserEntity;
     specialization?: SpecializationEntity;
@@ -41,6 +42,7 @@ export class StudentMapperFactory
       userId,
       indexNumber,
       indexYear,
+      fullIndex,
       specialization
         ? new Specialization(
             specialization.id,
@@ -62,6 +64,7 @@ export class StudentMapperFactory
     userId,
     indexNumber,
     year: indexYear,
+    fullIndex,
   }: Student): StudentEntity & {
     user?: UserEntity;
     specialization?: SpecializationEntity;
@@ -74,6 +77,7 @@ export class StudentMapperFactory
       userId,
       indexNumber,
       indexYear,
+      fullIndex,
     };
   }
 }

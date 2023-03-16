@@ -12,6 +12,10 @@ import { PrismaModule } from '../persistance/prisma/prisma.module';
 import { ProfessorMapperFactory } from '../courses/factories/professor-mapper.factory';
 import { StudentFactory } from '../../domain/specialization/factories/student.factory';
 import { ProfessorFactory } from '../../domain/specialization/factories/professor.factory';
+import { SpecializationController } from './specialization.controller';
+import { SearchStudentsQueryHandler } from '../../application/specialization/queries/search-students/search-students-query.handler';
+import { SearchProfessorQueryHandler } from '../../application/specialization/queries/search-professors/search-professor-query.handler';
+import { SearchStudentsNotAttendingQueryHandler } from '../../application/specialization/queries/get-students-not-attending/search-students-not-attending-query.handler';
 
 const providers: Provider[] = [
   {
@@ -27,9 +31,17 @@ const providers: Provider[] = [
   ProfessorFactory,
   ProfessorMapperFactory,
 ];
+
+const queries: Provider[] = [
+  SearchStudentsQueryHandler,
+  SearchProfessorQueryHandler,
+  SearchStudentsNotAttendingQueryHandler,
+];
+
 @Module({
+  controllers: [SpecializationController],
   imports: [CqrsModule, PrismaModule],
-  providers: [...providers],
+  providers: [...providers, ...queries],
   exports: [STUDENT_REPOSITORY, PROFESSOR_REPOSITORY],
 })
 export class SpecializationModule {}

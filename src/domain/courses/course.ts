@@ -22,7 +22,6 @@ export class Course extends AggregateRoot {
   }
 
   addStudents(studentIds: number[]) {
-    console.log(studentIds);
     const students = studentIds.map((id) => StudentFactory.create({ id }));
     this.students = [...this.students, ...students];
   }

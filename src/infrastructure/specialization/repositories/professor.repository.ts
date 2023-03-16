@@ -36,4 +36,35 @@ export class ProfessorRepository implements IProfessorRepository {
     });
     return this.professorMapperFactory.fromEntity(professor);
   }
+
+  async searchProfessors(
+    text: string,
+    page: number,
+    limit: number,
+  ): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            surname: {
+              contains: text,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return professors.map((professor) =>
+      this.professorMapperFactory.fromEntity(professor),
+    );
+  }
 }

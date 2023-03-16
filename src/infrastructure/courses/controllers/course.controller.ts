@@ -116,13 +116,13 @@ export class CourseController {
 
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('/:id/professors/add')
+  @Post('/:title/professors/add')
   async addProfessorsToCourse(
     @Body() { professors }: AddProfessorsToCourseDto,
-    @Param('id', ParseIntPipe) courseId: number,
+    @Param('title') courseTitle: string,
   ) {
     await this.commandBus.execute(
-      new AddProfessorsToCourseCommand(professors, courseId),
+      new AddProfessorsToCourseCommand(professors, courseTitle),
     );
     return { status: 'SUCCESS' };
   }
@@ -141,13 +141,13 @@ export class CourseController {
 
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('/:id/students/add')
+  @Post('/:title/students/add')
   async addStudentsToCourse(
     @Body() { students }: AddStudentsToCourseDto,
-    @Param('id', ParseIntPipe) courseId: number,
+    @Param('title') courseTitle: string,
   ) {
     await this.commandBus.execute(
-      new AddStudentsToCourseCommand(students, courseId),
+      new AddStudentsToCourseCommand(students, courseTitle),
     );
     return { status: 'SUCCESS' };
   }

@@ -4,6 +4,7 @@ import { Student } from '../../../domain/specialization/model/student';
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { StudentMapperFactory } from '../factories/student-mapper.factory';
 import { PersonDto } from '../../../domain/specialization/person.dto';
+import { CourseAttendeeSearchParams } from '../../../domain/specialization/types/course-attendee-search.type';
 
 @Injectable()
 export class StudentRepository implements IStudentRepository {
@@ -51,5 +52,91 @@ export class StudentRepository implements IStudentRepository {
       },
     });
     return course.students.map((s) => this.studentMapperFactory.fromEntity(s));
+  }
+
+  async searchStudents(
+    text: string,
+    page: number,
+    limit: number,
+  ): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            surname: {
+              contains: text,
+              mode: 'insensitive',
+            },
+          },
+          {
+            fullIndex: {
+              contains: text,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+      take: +limit,
+      skip: (page - 1) * limit,
+    });
+
+    return students.map((student) =>
+      this.studentMapperFactory.fromEntity(student),
+    );
+  }
+
+  async findAllNotCourseAttendees({
+    course,
+    text,
+    page,
+    limit,
+  }: CourseAttendeeSearchParams): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({
+      where: {
+        AND: [
+          {
+            courses: {
+              none: {
+                title: course,
+              },
+            },
+          },
+          {
+            OR: [
+              {
+                name: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                surname: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                fullIndex: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return students.map((student) =>
+      this.studentMapperFactory.fromEntity(student),
+    );
   }
 }

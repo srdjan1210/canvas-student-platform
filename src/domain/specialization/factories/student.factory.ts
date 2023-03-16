@@ -11,6 +11,7 @@ export class StudentFactory {
     specializationName?: string;
     indexNumber?: number;
     year?: number;
+    fullIndex?: string;
     specialization?: Specialization;
     user?: User;
   }) {
@@ -22,6 +23,7 @@ export class StudentFactory {
     const year = data.year ?? null;
     const userId = data.userId ?? null;
     const specialization = data.specialization ?? null;
+    const fullIndex = data.fullIndex ?? null;
     const user = data.user ?? null;
     return new Student(
       id,
@@ -31,6 +33,7 @@ export class StudentFactory {
       indexNumber,
       year,
       userId,
+      fullIndex,
       specialization,
       user,
     );

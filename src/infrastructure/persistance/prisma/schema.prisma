@@ -24,6 +24,7 @@ model StudentEntity {
   specialization     SpecializationEntity @relation(fields: [specializationName], references: [shortName])
   indexNumber        Int
   indexYear          Int
+  fullIndex          String
   userId             Int?                 @unique
   user               UserEntity?          @relation(fields: [userId], references: [id])
   courses            CourseEntity[]
@@ -73,7 +74,8 @@ model AnnouncementEntity {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {

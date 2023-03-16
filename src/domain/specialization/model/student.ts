@@ -10,6 +10,7 @@ export class Student {
     public readonly userId: number,
     public readonly indexNumber: number,
     public readonly year: number,
+    public readonly fullIndex: string,
     public readonly specialization: Specialization = null,
     public readonly user: User = null,
   ) {}

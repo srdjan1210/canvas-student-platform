@@ -27,7 +27,6 @@ export class NotificationGateway {
   @OnEvent('announcement.created')
   handleAnnouncementCreated({ ids, notification }: AnnouncementCreatedPayload) {
     this.connections.forEach((value: number, key: Socket) => {
-      console.log(ids, value);
       if (ids.includes(value))
         key.emit('notification', {
           id: notification.id,

@@ -38,6 +38,8 @@ export class CourseRepository implements ICourseRepository {
     students,
     announcements,
   }: Course): Promise<void> {
+    console.log('triggered');
+    console.log(students.map((s) => s.id));
     await this.prisma.courseEntity.update({
       data: {
         title,
@@ -49,9 +51,11 @@ export class CourseRepository implements ICourseRepository {
           })),
         },
         students: {
-          connect: students.map((s) => ({
-            id: s.id,
-          })),
+          connect: [
+            ...students.map((s) => ({
+              id: s.id,
+            })),
+          ],
         },
         announcements: {
           create: announcements.map((a) => ({

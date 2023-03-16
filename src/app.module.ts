@@ -4,6 +4,7 @@ import { AuthModule } from './infrastructure/auth/auth.module';
 import { CourseModule } from './infrastructure/courses/course.module';
 import { WebsocketModule } from './infrastructure/sockets/websocket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { SpecializationModule } from './infrastructure/specialization/specialization.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -19,6 +20,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
     CourseModule,
     WebsocketModule,
+    SpecializationModule,
   ],
   controllers: [],
   providers: [],

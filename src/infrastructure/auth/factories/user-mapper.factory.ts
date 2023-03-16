@@ -42,6 +42,7 @@ export class UserEntityMapperFactory
             student.userId,
             student.indexNumber,
             student.indexYear,
+            student.fullIndex,
           )
         : null,
       professor

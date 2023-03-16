@@ -36,6 +36,7 @@ export class RegisterStudentCommandHandler
       null,
       indexNumber,
       year,
+      this.createFullIndex(specializationName, indexNumber, year),
       null,
       null,
     );
@@ -52,5 +53,9 @@ export class RegisterStudentCommandHandler
     createdUser.createAccount();
     createdUser.commit();
     return createdUser;
+  }
+
+  private createFullIndex(specialization: string, num: number, year: number) {
+    return `${specialization}${num}-${year}`;
   }
 }

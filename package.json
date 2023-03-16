@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "seed": "ts-node ./src/infrastructure/persistance/prisma/prisma.seed.ts",
+    "seed:students": "ts-node ./src/infrastructure/persistance/prisma/students.seed.ts",
     "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",
     "prisma:generate": "npx prisma generate --schema ./src/infrastructure/persistance/prisma/schema.prisma",
     "prisma:migrate:dev": "npx prisma migrate dev --schema ./src/infrastructure/persistance/prisma/schema.prisma",

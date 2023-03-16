@@ -61,6 +61,7 @@ export class UserRepository implements IUserRepository {
             indexYear: student.year,
             indexNumber: student.indexNumber,
             specializationName: student.specializationName,
+            fullIndex: student.fullIndex,
           },
         },
       },

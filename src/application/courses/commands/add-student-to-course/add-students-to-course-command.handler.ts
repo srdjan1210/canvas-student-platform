@@ -20,10 +20,10 @@ export class AddStudentsToCourseCommandHandler
   ) {}
   async execute({
     studentIds,
-    courseId,
+    courseTitle,
   }: AddStudentsToCourseCommand): Promise<void> {
     const course = this.eventBus.mergeObjectContext(
-      await this.courseRepository.findById(courseId),
+      await this.courseRepository.findByTitle(courseTitle),
     );
     if (!course) throw new CourseNotFoundException();
 

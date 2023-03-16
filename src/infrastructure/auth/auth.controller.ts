@@ -1,6 +1,14 @@
 import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
 import { CommandBus } from '@nestjs/cqrs';
-import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { LoginCommand } from '../../application/auth/commands/login/login.command';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterStudentDto } from './dtos/register-student.dto';
@@ -19,6 +27,7 @@ import { ProfilePresenter } from './presenters/profile.presenter';
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post('/login')
   async login(@Body() { email, password }: LoginDto) {
     const token = await this.commandBus.execute(

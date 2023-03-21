@@ -36,8 +36,6 @@ export class AuthController {
     return new LoggedInPresenter(token);
   }
 
-  @Roles(UserRole.ADMINISTRATOR)
-  @UseGuards(JwtGuard, RoleGuard)
   @Post('/register/student')
   async registerStudent(
     @Body()

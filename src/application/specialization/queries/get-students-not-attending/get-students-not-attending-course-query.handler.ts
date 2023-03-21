@@ -1,12 +1,12 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { SearchStudentsNotAttendingQuery } from './search-students-not-attending.query';
+import { GetStudentsNotAttendingCourseQuery } from './get-students-not-attending-course.query';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { STUDENT_REPOSITORY } from '../../../../domain/specialization/specialization.constants';
 import { IStudentRepository } from '../../../../domain/specialization/interfaces/student-repository.interface';
 
-@QueryHandler(SearchStudentsNotAttendingQuery)
-export class SearchStudentsNotAttendingQueryHandler
-  implements IQueryHandler<SearchStudentsNotAttendingQuery>
+@QueryHandler(GetStudentsNotAttendingCourseQuery)
+export class GetStudentsNotAttendingCourseQueryHandler
+  implements IQueryHandler<GetStudentsNotAttendingCourseQuery>
 {
   constructor(
     @Inject(STUDENT_REPOSITORY)
@@ -18,7 +18,7 @@ export class SearchStudentsNotAttendingQueryHandler
     search,
     page,
     limit,
-  }: SearchStudentsNotAttendingQuery): Promise<any> {
+  }: GetStudentsNotAttendingCourseQuery): Promise<any> {
     return this.studentRepository.findAllNotCourseAttendees({
       course,
       text: search,

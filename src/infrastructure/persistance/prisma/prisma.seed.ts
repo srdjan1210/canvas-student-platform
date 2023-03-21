@@ -16,9 +16,9 @@ const getSpecialization = (
 
 async function main() {
   const specialization = getSpecialization('RA', 'Racunarstvo i automatika');
-  await prisma.specializationEntity.create({
-    data: specialization,
-  });
+  // await prisma.specializationEntity.create({
+  //   data: specialization,
+  // });
   await prisma.userEntity.create({
     data: {
       email: 'admin@gmail.com',

@@ -22,12 +22,10 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
   async execute({ email, password }: LoginCommand): Promise<string> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) throw new InvalidCredentialsException();
-
     const isPasswordCorrect = await this.hashingService.comparePassword(
       password,
       user.password,
     );
-
     if (!isPasswordCorrect) throw new InvalidCredentialsException();
     return await this.jwtService.generateToken({
       role: user.role,

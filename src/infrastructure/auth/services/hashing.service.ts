@@ -8,6 +8,7 @@ export class HashingService implements IHashingService {
     password: string,
     existingPassword: string,
   ): Promise<boolean> {
+    console.log(password, existingPassword);
     return bcrypt.compare(password, existingPassword);
   }
 

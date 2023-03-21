@@ -4,6 +4,7 @@ import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { PersonDto } from '../../../domain/specialization/person.dto';
 import { Professor } from '../../../domain/specialization/model/professor';
 import { ProfessorMapperFactory } from '../../courses/factories/professor-mapper.factory';
+import { CourseMemberSearchParams } from '../../../domain/specialization/types/course-member-search.type';
 
 @Injectable()
 export class ProfessorRepository implements IProfessorRepository {
@@ -66,5 +67,52 @@ export class ProfessorRepository implements IProfessorRepository {
     return professors.map((professor) =>
       this.professorMapperFactory.fromEntity(professor),
     );
+  }
+
+  async findAllNotCourseAttendees({
+    course,
+    page,
+    limit,
+    text,
+  }: CourseMemberSearchParams): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({
+      where: {
+        AND: [
+          {
+            courses: {
+              none: {
+                title: course,
+              },
+            },
+          },
+          {
+            OR: [
+              {
+                name: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                surname: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                title: {
+                  contains: text,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return professors.map((p) => this.professorMapperFactory.fromEntity(p));
   }
 }

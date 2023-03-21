@@ -20,6 +20,9 @@ import { AnnouncementCreatedEventHandler } from '../../application/courses/event
 import { GetStudentCoursesQueryHandler } from '../../application/courses/queries/get-student-courses/get-student-courses-query.handler';
 import { CreateFolderCommandHandler } from '../../application/courses/commands/create-folder/create-folder-command.handler';
 import { GetProfessorCorusesQueryHandler } from '../../application/courses/queries/get-professor-courses/get-professor-coruses-query.handler';
+import { GetAllPaginatedQueryHandler } from '../../application/courses/queries/get-all-paginated/get-all-paginated-query.handler';
+import { GetCourseProfessorsQueryHandler } from '../../application/courses/queries/get-course-professors/get-course-professors-query.handler';
+import { GetCourseStudentsQueryHandler } from '../../application/courses/queries/get-course-students/get-course-students-query.handler';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -35,6 +38,9 @@ const queries = [
   ListCourseFolderQueryHandler,
   GetStudentCoursesQueryHandler,
   GetProfessorCorusesQueryHandler,
+  GetAllPaginatedQueryHandler,
+  GetCourseProfessorsQueryHandler,
+  GetCourseStudentsQueryHandler,
 ];
 
 const events = [AnnouncementCreatedEventHandler];

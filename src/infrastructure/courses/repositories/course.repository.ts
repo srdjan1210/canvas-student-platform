@@ -3,12 +3,20 @@ import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator'
 import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { CourseMapperFactory } from '../factories/course-mapper.factory';
 import { Course } from '../../../domain/courses/course';
+import { CourseProfessorsPaginated } from '../../../domain/courses/types/course-professors-paginated.type';
+import { Professor } from '../../../domain/specialization/model/professor';
+import { Student } from '../../../domain/specialization/model/student';
+import { CourseStudentsPaginated } from '../../../domain/courses/types/course-students-paginated.type';
+import { StudentMapperFactory } from '../../specialization/factories/student-mapper.factory';
+import { ProfessorMapperFactory } from '../factories/professor-mapper.factory';
 
 @Injectable()
 export class CourseRepository implements ICourseRepository {
   constructor(
     private readonly courseMapperFactory: CourseMapperFactory,
     private readonly prisma: PrismaProvider,
+    private readonly studentMapperFactory: StudentMapperFactory,
+    private readonly professorMapperFactory: ProfessorMapperFactory,
   ) {}
 
   async create({ title, year, espb }: Course): Promise<Course> {
@@ -134,5 +142,65 @@ export class CourseRepository implements ICourseRepository {
     });
 
     return courses.map((course) => this.courseMapperFactory.fromEntity(course));
+  }
+
+  async findAllPaginated({
+    page,
+    limit,
+  }: {
+    page: number;
+    limit: number;
+  }): Promise<Course[]> {
+    const courses = await this.prisma.courseEntity.findMany({
+      where: {},
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return courses.map((course) => this.courseMapperFactory.fromEntity(course));
+  }
+
+  async findCourseProfessors({
+    title,
+    page,
+    limit,
+  }: CourseProfessorsPaginated): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({
+      where: {
+        courses: {
+          some: {
+            title,
+          },
+        },
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return professors.map((professor) =>
+      this.professorMapperFactory.fromEntity(professor),
+    );
+  }
+
+  async findCourseStudents({
+    title,
+    page,
+    limit,
+  }: CourseStudentsPaginated): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({
+      where: {
+        courses: {
+          some: {
+            title,
+          },
+        },
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return students.map((student) =>
+      this.studentMapperFactory.fromEntity(student),
+    );
   }
 }

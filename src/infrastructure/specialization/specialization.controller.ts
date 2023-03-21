@@ -16,7 +16,8 @@ import { SearchStudentsQuery } from '../../application/specialization/queries/se
 import { SearchProfessorQuery } from '../../application/specialization/queries/search-professors/search-professor.query';
 import { ProfessorPresenter } from '../presenters/professor.presenter';
 import { StudentPresenter } from '../presenters/student.presenter';
-import { SearchStudentsNotAttendingQuery } from '../../application/specialization/queries/get-students-not-attending/search-students-not-attending.query';
+import { GetStudentsNotAttendingCourseQuery } from '../../application/specialization/queries/get-students-not-attending/get-students-not-attending-course.query';
+import { GetProfessorsNotCourseMembersQuery } from '../../application/specialization/queries/get-professors-not-course-members/get-professors-not-course-members.query';
 
 @Controller('specialization')
 export class SpecializationController {
@@ -61,9 +62,24 @@ export class SpecializationController {
     @Query('search') search: string,
   ) {
     const students = await this.queryBus.execute(
-      new SearchStudentsNotAttendingQuery(course, search, page, limit),
+      new GetStudentsNotAttendingCourseQuery(course, search, page, limit),
     );
 
     return students.map((student) => new StudentPresenter(student));
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/professors/course/:title/not-member')
+  async getProfessorsNotMembers(
+    @Param('title') course: string,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('search') search: string,
+  ) {
+    const professors = await this.queryBus.execute(
+      new GetProfessorsNotCourseMembersQuery(course, search, page, limit),
+    );
+    return professors.map((professor) => new ProfessorPresenter(professor));
   }
 }

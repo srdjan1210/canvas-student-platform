@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Req,
   StreamableFile,
   UploadedFile,
@@ -41,6 +42,11 @@ import { CourseFilePresenter } from '../presenters/course-file.presenter';
 import { CreateFolderCommand } from '../../../application/courses/commands/create-folder/create-folder.command';
 import { GetProfessorCoursesQuery } from '../../../application/courses/queries/get-professor-courses/get-professor-courses.query';
 import { FileExtensionValidator } from '../validators/file-extension.validator';
+import { GetAllPaginatedQuery } from '../../../application/courses/queries/get-all-paginated/get-all-paginated.query';
+import { GetCourseStudentsQuery } from '../../../application/courses/queries/get-course-students/get-course-students.query';
+import { GetCourseProfessorsQuery } from '../../../application/courses/queries/get-course-professors/get-course-professors.query';
+import { StudentPresenter } from '../../presenters/student.presenter';
+import { ProfessorPresenter } from '../../presenters/professor.presenter';
 
 @Controller('courses')
 export class CourseController {
@@ -141,13 +147,53 @@ export class CourseController {
 
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
+  @Get('/')
+  async getAll(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    const courses = await this.queryBus.execute(
+      new GetAllPaginatedQuery(page, limit),
+    );
+    return courses.map((course) => new CoursePresenter(course));
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/:title/students')
+  async getCourseStudents(
+    @Param('title') title: string,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    const students = await this.queryBus.execute(
+      new GetCourseStudentsQuery(title, page, limit),
+    );
+    return students.map((student) => new StudentPresenter(student));
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/:title/professors')
+  async getCourseProfessors(
+    @Param('title') title: string,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    const professors = await this.queryBus.execute(
+      new GetCourseProfessorsQuery(title, page, limit),
+    );
+    return professors.map((professor) => new ProfessorPresenter(professor));
+  }
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/:title/students/add')
   async addStudentsToCourse(
     @Body() { students }: AddStudentsToCourseDto,
-    @Param('title') courseTitle: string,
+    @Param('title') title: string,
   ) {
     await this.commandBus.execute(
-      new AddStudentsToCourseCommand(students, courseTitle),
+      new AddStudentsToCourseCommand(students, title),
     );
     return { status: 'SUCCESS' };
   }

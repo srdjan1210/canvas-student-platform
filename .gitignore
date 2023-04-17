@@ -1,4 +1,5 @@
 # compiled output
+todo.txt
 /dist
 /node_modules
 .env

@@ -62,4 +62,25 @@ export class SupabaseStorageService implements IStorageService {
   private getMainBucket() {
     return this.client.from(MAIN_BUCKET);
   }
+
+  async deleteFolder(folder: string): Promise<void> {
+    const bucket = await this.getMainBucket();
+    const forDeleting = await this.findFileTree(folder);
+    await bucket.remove(forDeleting);
+  }
+
+  async findFileTree(folder: string): Promise<string[]> {
+    const bucket = await this.getMainBucket();
+    const items = await bucket.list(folder);
+    const paths: string[] = [];
+    for (const item of items.data) {
+      if (item.metadata !== null) {
+        paths.push(`${folder}/${item.name}`);
+        continue;
+      }
+      const subFiles = await this.findFileTree(`${folder}/${item.name}`);
+      paths.push(...subFiles);
+    }
+    return paths;
+  }
 }

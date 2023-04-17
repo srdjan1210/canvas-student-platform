@@ -23,6 +23,7 @@ import { GetProfessorCorusesQueryHandler } from '../../application/courses/queri
 import { GetAllPaginatedQueryHandler } from '../../application/courses/queries/get-all-paginated/get-all-paginated-query.handler';
 import { GetCourseProfessorsQueryHandler } from '../../application/courses/queries/get-course-professors/get-course-professors-query.handler';
 import { GetCourseStudentsQueryHandler } from '../../application/courses/queries/get-course-students/get-course-students-query.handler';
+import { DeleteFolderCommandHandler } from '../../application/courses/commands/delete-folder/delete-folder-command.handler';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -32,6 +33,7 @@ const commands = [
   AddProfessorsToCourseCommandHandler,
   AddAnnouncementCommandHandler,
   CreateFolderCommandHandler,
+  DeleteFolderCommandHandler,
 ];
 
 const queries = [

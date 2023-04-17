@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
@@ -47,6 +48,7 @@ import { GetCourseStudentsQuery } from '../../../application/courses/queries/get
 import { GetCourseProfessorsQuery } from '../../../application/courses/queries/get-course-professors/get-course-professors.query';
 import { StudentPresenter } from '../../presenters/student.presenter';
 import { ProfessorPresenter } from '../../presenters/professor.presenter';
+import { DeleteFolderCommand } from '../../../application/courses/commands/delete-folder/delete-folder.command';
 
 @Controller('courses')
 export class CourseController {
@@ -105,6 +107,14 @@ export class CourseController {
 
     if (!files) return [];
     return files.map((file) => new CourseFilePresenter(file));
+  }
+
+  @Roles(UserRole.PROFESSOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('/folder/:folder')
+  async deleteFolder(@Param('folder') folder: string) {
+    await this.commandBus.execute(new DeleteFolderCommand(folder));
+    return { status: 'SUCCESS' };
   }
 
   @UseGuards(JwtGuard)

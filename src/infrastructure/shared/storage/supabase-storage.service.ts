@@ -68,6 +68,10 @@ export class SupabaseStorageService implements IStorageService {
     const forDeleting = await this.findFileTree(folder);
     await bucket.remove(forDeleting);
   }
+  async deleteFile(path: string): Promise<void> {
+    const bucket = await this.getMainBucket();
+    await bucket.remove([path]);
+  }
 
   async findFileTree(folder: string): Promise<string[]> {
     const bucket = await this.getMainBucket();

@@ -55,6 +55,7 @@ import { ImportStudentsFromCsvCommand } from '../../../application/courses/comma
 import { RemoveStudentFromCourseCommand } from '../../../application/courses/commands/remove-student-from-course/remove-student-from-course.command';
 import { RemoveProfessorFromCourseCommand } from '../../../application/courses/commands/remove-professor-from-course/remove-professor-from-course.command';
 import { ImportProfessorsFromCsvCommand } from '../../../application/courses/commands/import-professors-from-csv/import-professors-from-csv.command';
+import { DeleteFileCommand } from '../../../application/courses/commands/delete-file/delete-file.command';
 @Controller('courses')
 export class CourseController {
   constructor(
@@ -118,8 +119,19 @@ export class CourseController {
   @Roles(UserRole.PROFESSOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Delete('/folder/:folder')
-  async deleteFolder(@Param('folder') folder: string) {
-    await this.commandBus.execute(new DeleteFolderCommand(folder));
+  async deleteFolder(
+    @Req() { user }: ReqWithUser,
+    @Param('folder') folder: string,
+  ) {
+    await this.commandBus.execute(new DeleteFolderCommand(user.id, folder));
+    return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.PROFESSOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('/file/:path')
+  async deleteFile(@Req() { user }: ReqWithUser, @Param('path') path: string) {
+    await this.commandBus.execute(new DeleteFileCommand(user.id, path));
     return { status: 'SUCCESS' };
   }
 

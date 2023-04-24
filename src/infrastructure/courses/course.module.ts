@@ -31,6 +31,8 @@ import { ImportStudentsFromCsvCommandHandler } from '../../application/courses/c
 import { RemoveStudentFromCourseCommandHandler } from '../../application/courses/commands/remove-student-from-course/remove-student-from-course-command.handler';
 import { RemoveProfessorFromCourseCommandHandler } from '../../application/courses/commands/remove-professor-from-course/remove-professor-from-course-command.handler';
 import { ImportProfessorsFromCsvCommandHandler } from '../../application/courses/commands/import-professors-from-csv/import-professors-from-csv-command.handler';
+import { DeleteFileCommandHandler } from '../../application/courses/commands/delete-file/delete-file-command.handler';
+import { AuthModule } from '../auth/auth.module';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -48,6 +50,7 @@ const commands = [
   ImportProfessorsFromCsvCommandHandler,
   RemoveStudentFromCourseCommandHandler,
   RemoveProfessorFromCourseCommandHandler,
+  DeleteFileCommandHandler,
 ];
 
 const queries = [
@@ -73,6 +76,12 @@ const providers: Provider[] = [
 @Module({
   controllers: [CourseController],
   providers: [...commands, ...queries, ...events, ...providers],
-  imports: [SharedModule, CqrsModule, PrismaModule, SpecializationModule],
+  imports: [
+    SharedModule,
+    CqrsModule,
+    PrismaModule,
+    SpecializationModule,
+    AuthModule,
+  ],
 })
 export class CourseModule {}

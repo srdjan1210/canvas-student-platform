@@ -5,4 +5,5 @@ export interface IStorageService {
   getSignedDownloadLink(path: string): Promise<string>;
   createFolder(folder: string): Promise<string>;
   deleteFolder(folder: string): Promise<void>;
+  deleteFile(path: string): Promise<void>;
 }

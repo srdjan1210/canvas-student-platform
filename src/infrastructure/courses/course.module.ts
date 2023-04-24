@@ -24,6 +24,13 @@ import { GetAllPaginatedQueryHandler } from '../../application/courses/queries/g
 import { GetCourseProfessorsQueryHandler } from '../../application/courses/queries/get-course-professors/get-course-professors-query.handler';
 import { GetCourseStudentsQueryHandler } from '../../application/courses/queries/get-course-students/get-course-students-query.handler';
 import { DeleteFolderCommandHandler } from '../../application/courses/commands/delete-folder/delete-folder-command.handler';
+import { ParseStudentsFromCsvCommandHandler } from '../../application/courses/commands/parse-students-from-csv/parse-students-from-csv-command.handler';
+import { ExportStudentsToCsvQueryHandler } from '../../application/courses/queries/export-students-to-csv/export-students-to-csv-query.handler';
+import { ExportProfessorsToCsvQueryHandler } from '../../application/courses/queries/export-professors-to-csv/export-professors-to-csv-query.handler';
+import { ImportStudentsFromCsvCommandHandler } from '../../application/courses/commands/import-students-from-csv/import-students-from-csv-command.handler';
+import { RemoveStudentFromCourseCommandHandler } from '../../application/courses/commands/remove-student-from-course/remove-student-from-course-command.handler';
+import { RemoveProfessorFromCourseCommandHandler } from '../../application/courses/commands/remove-professor-from-course/remove-professor-from-course-command.handler';
+import { ImportProfessorsFromCsvCommandHandler } from '../../application/courses/commands/import-professors-from-csv/import-professors-from-csv-command.handler';
 
 const commands = [
   UploadCourseFileCommandHandler,
@@ -34,6 +41,13 @@ const commands = [
   AddAnnouncementCommandHandler,
   CreateFolderCommandHandler,
   DeleteFolderCommandHandler,
+  ParseStudentsFromCsvCommandHandler,
+  ExportStudentsToCsvQueryHandler,
+  ExportProfessorsToCsvQueryHandler,
+  ImportStudentsFromCsvCommandHandler,
+  ImportProfessorsFromCsvCommandHandler,
+  RemoveStudentFromCourseCommandHandler,
+  RemoveProfessorFromCourseCommandHandler,
 ];
 
 const queries = [

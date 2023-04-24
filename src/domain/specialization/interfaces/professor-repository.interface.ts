@@ -13,4 +13,6 @@ export interface IProfessorRepository {
     page: number,
     limit: number,
   ): Promise<Professor[]>;
+  findAll(): Promise<Professor[]>;
+  findAllByCourse(courseId: number): Promise<Professor[]>;
 }

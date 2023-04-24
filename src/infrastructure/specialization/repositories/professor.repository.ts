@@ -12,6 +12,7 @@ export class ProfessorRepository implements IProfessorRepository {
     private readonly prisma: PrismaProvider,
     private readonly professorMapperFactory: ProfessorMapperFactory,
   ) {}
+
   async findPersonalInfos(professorIds: number[]): Promise<PersonDto[]> {
     const professors = await this.prisma.professorEntity.findMany({
       where: {
@@ -114,5 +115,28 @@ export class ProfessorRepository implements IProfessorRepository {
     });
 
     return professors.map((p) => this.professorMapperFactory.fromEntity(p));
+  }
+
+  async findAll(): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({});
+    return professors.map((professor) =>
+      this.professorMapperFactory.fromEntity(professor),
+    );
+  }
+
+  async findAllByCourse(courseId: number): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({
+      where: {
+        courses: {
+          some: {
+            id: courseId,
+          },
+        },
+      },
+    });
+
+    return professors.map((professor) =>
+      this.professorMapperFactory.fromEntity(professor),
+    );
   }
 }

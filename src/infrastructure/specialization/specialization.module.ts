@@ -17,6 +17,9 @@ import { SearchStudentsQueryHandler } from '../../application/specialization/que
 import { SearchProfessorQueryHandler } from '../../application/specialization/queries/search-professors/search-professor-query.handler';
 import { GetStudentsNotAttendingCourseQueryHandler } from '../../application/specialization/queries/get-students-not-attending/get-students-not-attending-course-query.handler';
 import { GetProfessorsNotCourseMembersQueryHandler } from '../../application/specialization/queries/get-professors-not-course-members/get-professors-not-course-members-query.handler';
+import { ExportStudentsQueryHandler } from '../../application/specialization/queries/export-students/export-students-query.handler';
+import { SharedModule } from '../shared/shared.module';
+import { ExportProfessorsQueryHandler } from '../../application/specialization/queries/export-professors/export-professors-query.handler';
 
 const providers: Provider[] = [
   {
@@ -31,6 +34,8 @@ const providers: Provider[] = [
   StudentFactory,
   ProfessorFactory,
   ProfessorMapperFactory,
+  ExportStudentsQueryHandler,
+  ExportProfessorsQueryHandler,
 ];
 
 const queries: Provider[] = [
@@ -42,7 +47,7 @@ const queries: Provider[] = [
 
 @Module({
   controllers: [SpecializationController],
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, SharedModule],
   providers: [...providers, ...queries],
   exports: [
     STUDENT_REPOSITORY,

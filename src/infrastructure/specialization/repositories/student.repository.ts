@@ -139,4 +139,21 @@ export class StudentRepository implements IStudentRepository {
       this.studentMapperFactory.fromEntity(student),
     );
   }
+
+  async findAllWithIndexes(indexes: string[]): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({
+      where: {
+        fullIndex: {
+          in: indexes,
+        },
+      },
+    });
+    return students.map((st) => this.studentMapperFactory.fromEntity(st));
+  }
+  async findAll(): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({});
+    return students.map((student) =>
+      this.studentMapperFactory.fromEntity(student),
+    );
+  }
 }

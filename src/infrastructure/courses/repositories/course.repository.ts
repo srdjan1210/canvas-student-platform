@@ -46,8 +46,6 @@ export class CourseRepository implements ICourseRepository {
     students,
     announcements,
   }: Course): Promise<void> {
-    console.log('triggered');
-    console.log(students.map((s) => s.id));
     await this.prisma.courseEntity.update({
       data: {
         title,
@@ -201,6 +199,86 @@ export class CourseRepository implements ICourseRepository {
 
     return students.map((student) =>
       this.studentMapperFactory.fromEntity(student),
+    );
+  }
+
+  async filterStudentsNotInCourse(
+    title: string,
+    indexes: string[],
+  ): Promise<Student[]> {
+    const students = await this.prisma.studentEntity.findMany({
+      where: {
+        courses: {
+          none: {
+            title,
+          },
+        },
+        fullIndex: {
+          in: indexes,
+        },
+      },
+    });
+
+    return students.map((student) =>
+      this.studentMapperFactory.fromEntity(student),
+    );
+  }
+
+  async removeStudentFromCourse(
+    title: string,
+    studentId: number,
+  ): Promise<void> {
+    await this.prisma.courseEntity.update({
+      where: {
+        title,
+      },
+      data: {
+        students: {
+          disconnect: {
+            id: studentId,
+          },
+        },
+      },
+    });
+  }
+
+  async removeProfessorFromCourse(
+    title: string,
+    professorId: number,
+  ): Promise<void> {
+    await this.prisma.courseEntity.update({
+      where: {
+        title,
+      },
+      data: {
+        professors: {
+          disconnect: {
+            id: professorId,
+          },
+        },
+      },
+    });
+  }
+
+  async filterProfessorsNotInCourse(
+    title: string,
+    ids: number[],
+  ): Promise<Professor[]> {
+    const professors = await this.prisma.professorEntity.findMany({
+      where: {
+        courses: {
+          none: {
+            title,
+          },
+        },
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    return professors.map((professor) =>
+      this.professorMapperFactory.fromEntity(professor),
     );
   }
 }

@@ -10,4 +10,6 @@ export interface IStudentRepository {
   findAllNotCourseAttendees(
     params: CourseAttendeeSearchParams,
   ): Promise<Student[]>;
+  findAllWithIndexes(indexes: string[]): Promise<Student[]>;
+  findAll(): Promise<Student[]>;
 }

@@ -18,7 +18,8 @@ export class DownloadCourseFileCommandHandler
   ) {}
   async execute({ folder, file }: DownloadCourseFileCommand): Promise<string> {
     const url = `${folder}/${file}`;
-    const course = await this.courseRepository.findByTitle(folder);
+    const crs = folder.split('/')[0];
+    const course = await this.courseRepository.findByTitle(crs);
     if (!course) throw new CourseNotFoundException();
     return await this.storageService.getSignedDownloadLink(url);
   }

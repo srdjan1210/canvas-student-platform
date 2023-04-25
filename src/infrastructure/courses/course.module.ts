@@ -14,7 +14,6 @@ import { COURSE_REPOSITORY } from '../../domain/courses/course.constants';
 import { CourseRepository } from './repositories/course.repository';
 import { SpecializationModule } from '../specialization/specialization.module';
 import { CourseMapperFactory } from './factories/course-mapper.factory';
-import { CourseFactory } from '../../domain/courses/course.factory';
 import { AddAnnouncementCommandHandler } from '../../application/courses/commands/add-announcement/add-announcement-command.handler';
 import { AnnouncementCreatedEventHandler } from '../../application/courses/events/announcement-created-event.handler';
 import { GetStudentCoursesQueryHandler } from '../../application/courses/queries/get-student-courses/get-student-courses-query.handler';
@@ -69,7 +68,6 @@ const providers: Provider[] = [
     provide: COURSE_REPOSITORY,
     useClass: CourseRepository,
   },
-  CourseFactory,
   CourseMapperFactory,
 ];
 

@@ -107,9 +107,12 @@ export class CourseController {
 
   @UseGuards(JwtGuard)
   @Get('/list/folder/:folder')
-  async listFolder(@Param('folder') folder: string) {
+  async listFolder(
+    @Param('folder') folder: string,
+    @Req() { user }: ReqWithUser,
+  ) {
     const files = await this.queryBus.execute(
-      new ListCourseFolderQuery(folder),
+      new ListCourseFolderQuery(user.id, folder),
     );
 
     if (!files) return [];
@@ -137,8 +140,8 @@ export class CourseController {
 
   @UseGuards(JwtGuard)
   @Get('/list/folder')
-  async listRoot() {
-    return await this.queryBus.execute(new ListCourseFolderQuery(''));
+  async listRoot(@Req() { user }: ReqWithUser) {
+    return await this.queryBus.execute(new ListCourseFolderQuery(user.id, ''));
   }
 
   @UseGuards(JwtGuard)

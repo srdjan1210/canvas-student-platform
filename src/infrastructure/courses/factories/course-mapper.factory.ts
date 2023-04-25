@@ -1,8 +1,8 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
 import { Course } from '../../../domain/courses/course';
 import { CourseEntity, ProfessorEntity, StudentEntity } from '@prisma/client';
-import { StudentFactory } from '../../../domain/specialization/factories/student.factory';
-import { ProfessorFactory } from '../../../domain/specialization/factories/professor.factory';
+import { Student } from '../../../domain/specialization/model/student';
+import { Professor } from '../../../domain/specialization/model/professor';
 
 export class CourseMapperFactory
   implements
@@ -24,15 +24,15 @@ export class CourseMapperFactory
     const studentsMapped = this.mapStudents(entity.students);
     const professorsMapped = this.mapProfessors(entity.professors);
 
-    return new Course(
-      entity.id,
-      entity.title,
-      entity.year,
-      entity.espb,
-      entity.description,
-      studentsMapped,
-      professorsMapped,
-    );
+    return Course.create({
+      id: entity.id,
+      title: entity.title,
+      year: entity.year,
+      espb: entity.espb,
+      description: entity.description,
+      students: studentsMapped,
+      professors: professorsMapped,
+    });
   }
   fromModel({ id, title, year, espb, description }: Course) {
     return {
@@ -47,7 +47,7 @@ export class CourseMapperFactory
   private mapStudents = (students: StudentEntity[]) => {
     return students
       ? students.map((s) =>
-          StudentFactory.create({
+          Student.create({
             id: s.id,
             name: s.name,
             surname: s.surname,
@@ -63,7 +63,7 @@ export class CourseMapperFactory
   private mapProfessors = (professors: ProfessorEntity[]) => {
     return professors
       ? professors.map((p) =>
-          ProfessorFactory.create({
+          Professor.create({
             id: p.id,
             name: p.name,
             surname: p.surname,

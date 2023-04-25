@@ -1,3 +1,6 @@
 export class ListCourseFolderQuery {
-  constructor(public readonly folder: string) {}
+  constructor(
+    public readonly authenticated: number,
+    public readonly folder: string,
+  ) {}
 }

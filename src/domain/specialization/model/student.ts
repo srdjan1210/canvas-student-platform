@@ -2,7 +2,7 @@ import { Specialization } from './specialization';
 import { User } from '../../auth/user';
 
 export class Student {
-  constructor(
+  protected constructor(
     public readonly id: number,
     public readonly name: string,
     public readonly surname: string,
@@ -14,4 +14,30 @@ export class Student {
     public readonly specialization: Specialization = null,
     public readonly user: User = null,
   ) {}
+
+  static create({
+    id,
+    name,
+    surname,
+    userId,
+    specializationName,
+    indexNumber,
+    year,
+    fullIndex,
+    specialization,
+    user,
+  }: Partial<Student>) {
+    return new Student(
+      id,
+      name,
+      surname,
+      specializationName,
+      userId,
+      indexNumber,
+      year,
+      fullIndex,
+      specialization,
+      user,
+    );
+  }
 }

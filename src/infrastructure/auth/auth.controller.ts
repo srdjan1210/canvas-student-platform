@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { LoginCommand } from '../../application/auth/commands/login/login.command';
@@ -22,8 +23,10 @@ import { ReqWithUser, RoleGuard } from './guards/role.guard';
 import { RegisterProfessorCommand } from '../../application/auth/commands/register-professor/register-professor.command';
 import { RegisterStudentCommand } from '../../application/auth/commands/register-student/register-student.command';
 import { ProfilePresenter } from './presenters/profile.presenter';
+import { DomainErrorFilter } from '../error-handling/domain-error.filter';
 
 @Controller('auth')
+@UseFilters(DomainErrorFilter)
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
 

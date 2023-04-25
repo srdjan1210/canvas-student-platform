@@ -13,6 +13,7 @@ import {
   Req,
   Res,
   UploadedFile,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -56,7 +57,9 @@ import { RemoveStudentFromCourseCommand } from '../../../application/courses/com
 import { RemoveProfessorFromCourseCommand } from '../../../application/courses/commands/remove-professor-from-course/remove-professor-from-course.command';
 import { ImportProfessorsFromCsvCommand } from '../../../application/courses/commands/import-professors-from-csv/import-professors-from-csv.command';
 import { DeleteFileCommand } from '../../../application/courses/commands/delete-file/delete-file.command';
+import { DomainErrorFilter } from '../../error-handling/domain-error.filter';
 @Controller('courses')
+@UseFilters(DomainErrorFilter)
 export class CourseController {
   constructor(
     private readonly commandBus: CommandBus,

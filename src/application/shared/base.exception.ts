@@ -1,3 +1,3 @@
 export class BaseException {
-  protected constructor(protected readonly message: string) {}
+  protected constructor(public readonly message: string) {}
 }

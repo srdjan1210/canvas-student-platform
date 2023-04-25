@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
   Query,
   Res,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -21,8 +22,10 @@ import { GetProfessorsNotCourseMembersQuery } from '../../application/specializa
 import { Response } from 'express';
 import { ExportStudentsQuery } from '../../application/specialization/queries/export-students/export-students.query';
 import { ExportProfessorsQuery } from '../../application/specialization/queries/export-professors/export-professors.query';
+import { DomainErrorFilter } from '../error-handling/domain-error.filter';
 
 @Controller('specialization')
+@UseFilters(DomainErrorFilter)
 export class SpecializationController {
   constructor(
     private readonly commandBus: CommandBus,

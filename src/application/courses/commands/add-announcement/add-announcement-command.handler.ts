@@ -23,18 +23,18 @@ export class AddAnnouncementCommandHandler
   async execute({
     title,
     body,
-    courseId,
+    course: courseName,
     professorId,
   }: AddAnnouncementCommand): Promise<void> {
     const course = this.eventBus.mergeObjectContext(
-      await this.courseRepository.findById(courseId),
+      await this.courseRepository.findByTitle(courseName),
     );
     if (!course) throw new CourseNotFoundException();
     const announcement = new Announcement(
       null,
       title,
       body,
-      courseId,
+      course.id,
       professorId,
     );
     course.addAnnouncement(announcement);

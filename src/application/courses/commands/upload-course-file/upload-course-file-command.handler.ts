@@ -7,6 +7,7 @@ import { COURSE_REPOSITORY } from '../../../../domain/courses/course.constants';
 import { ICourseRepository } from '../../../../domain/courses/interfaces/course-repository.interface';
 import { ProfessorNotInCourseException } from '../../../../domain/courses/exceptions/professor-not-in-course.exception';
 import { CourseNotFoundException } from '../../../../domain/courses/exceptions/course-not-found.exception';
+import { Course } from '../../../../domain/courses/course';
 
 @CommandHandler(UploadCourseFileCommand)
 export class UploadCourseFileCommandHandler
@@ -28,9 +29,8 @@ export class UploadCourseFileCommandHandler
       professors: true,
     });
 
-    if (!course) throw new CourseNotFoundException();
-    if (!course.professors.some((p) => p.id == professorId))
-      throw new ProfessorNotInCourseException();
+    Course.throwIfNull(course);
+    course.throwIfNotCourseProfessor(professorId);
 
     return await this.storageService.uploadFile(file, folder, filename);
   }

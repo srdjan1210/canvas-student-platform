@@ -9,6 +9,7 @@ import { COURSE_REPOSITORY } from '../../../../domain/courses/course.constants';
 import { ICourseRepository } from '../../../../domain/courses/interfaces/course-repository.interface';
 import { STORAGE_SERVICE } from '../../../shared/shared.constants';
 import { IStorageService } from '../../../shared/interfaces/storage-service.interface';
+import { Course } from '../../../../domain/courses/course';
 
 @CommandHandler(DeleteFileCommand)
 export class DeleteFileCommandHandler
@@ -22,17 +23,11 @@ export class DeleteFileCommandHandler
   ) {}
   async execute({ path, authenticated }: DeleteFileCommand): Promise<void> {
     const title = path.split('/')[0];
-    const course = await this.courseRepository.findByTitle(title);
-    if (!course) throw new CourseNotFoundException();
-
-    const user = await this.userRepository.findByIdPopulated(authenticated);
-    const courses = await this.courseRepository.findAllByProfessor(
-      user.professor.id,
-    );
-    const containsCourse = courses.filter((course) => course.title === title);
-
-    if (!containsCourse) throw new ProfessorNotInCourseException();
-
+    const course = await this.courseRepository.findByTitleIncluding(title, {
+      professors: true,
+    });
+    Course.throwIfNull(course);
+    course.throwIfNotCourseProfessor(authenticated);
     await this.storageService.deleteFile(path);
   }
 }

@@ -6,6 +6,9 @@ import { PersonDto } from '../specialization/person.dto';
 import { Announcement } from './announcement';
 import { StudentFactory } from '../specialization/factories/student.factory';
 import { ProfessorFactory } from '../specialization/factories/professor.factory';
+import { CourseNotFoundException } from './exceptions/course-not-found.exception';
+import { StudentNotEnrolledInCourseException } from './exceptions/student-not-enrolled-in-course.exception';
+import { NotCourseProfessorException } from './exceptions/not-course-professor.exception';
 
 export class Course extends AggregateRoot {
   constructor(
@@ -41,5 +44,23 @@ export class Course extends AggregateRoot {
 
   addAnnouncement(announcement: Announcement) {
     this.announcements.push(announcement);
+  }
+
+  throwIfNotEnrolled(studentId: number) {
+    const isEnrolled = this.students.some(
+      (student) => student.userId === studentId,
+    );
+    if (!isEnrolled) throw new StudentNotEnrolledInCourseException();
+  }
+
+  throwIfNotCourseProfessor(professorId: number) {
+    const isProfessor = this.professors.some(
+      (professor) => professor.userId === professorId,
+    );
+    if (!isProfessor) throw new NotCourseProfessorException();
+  }
+
+  static throwIfNull(course: Course) {
+    if (!course) throw new CourseNotFoundException();
   }
 }

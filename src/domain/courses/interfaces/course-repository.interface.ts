@@ -4,6 +4,7 @@ import { CourseStudentsPaginated } from '../types/course-students-paginated.type
 import { Student } from '../../specialization/model/student';
 import { Professor } from '../../specialization/model/professor';
 import { CourseProfessorsPaginated } from '../types/course-professors-paginated.type';
+import { CoursePopulateOptions } from '../types/course-populate-options.type';
 
 export interface ICourseRepository {
   findById(id: number): Promise<Course>;
@@ -15,10 +16,7 @@ export interface ICourseRepository {
   update(course: Course): Promise<void>;
   create(course: Course): Promise<Course>;
   findAllByStudent(studentId: number): Promise<Course[]>;
-  findByTitleIncluding(
-    title: string,
-    including: { professors?: boolean; students?: boolean },
-  );
+  findByTitleIncluding(title: string, including: CoursePopulateOptions);
   findAllByProfessor(professorId: number): Promise<Course[]>;
   findAllPaginated(data: Pagination): Promise<Course[]>;
   findCourseStudents(data: CourseStudentsPaginated): Promise<Student[]>;

@@ -27,6 +27,7 @@ export class UserRepository implements IUserRepository {
     const userEntity = await this.prisma.userEntity.findUnique({
       where: { email },
     });
+    if (!userEntity) return null;
     return this.mapperFactory.fromEntity(userEntity);
   }
 

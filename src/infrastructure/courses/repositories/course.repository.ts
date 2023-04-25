@@ -9,6 +9,7 @@ import { Student } from '../../../domain/specialization/model/student';
 import { CourseStudentsPaginated } from '../../../domain/courses/types/course-students-paginated.type';
 import { StudentMapperFactory } from '../../specialization/factories/student-mapper.factory';
 import { ProfessorMapperFactory } from '../factories/professor-mapper.factory';
+import { CoursePopulateOptions } from '../../../domain/courses/types/course-populate-options.type';
 
 @Injectable()
 export class CourseRepository implements ICourseRepository {
@@ -116,13 +117,13 @@ export class CourseRepository implements ICourseRepository {
 
   async findByTitleIncluding(
     title: string,
-    including: { professors?: boolean; students?: boolean },
+    { students, professors }: CoursePopulateOptions,
   ) {
     const course = await this.prisma.courseEntity.findUnique({
       where: { title },
       include: {
-        professors: including.professors,
-        students: including.students,
+        professors: professors ? true : undefined,
+        students: students ? true : undefined,
       },
     });
     return this.courseMapperFactory.fromEntity(course);

@@ -12,7 +12,6 @@ export class CreateCourseCommandHandler
   constructor(
     @Inject(COURSE_REPOSITORY)
     private readonly courseRepository: ICourseRepository,
-    private readonly eventBus: EventPublisher,
   ) {}
   async execute({
     title,
@@ -20,7 +19,12 @@ export class CreateCourseCommandHandler
     espb,
     description,
   }: CreateCourseCommand): Promise<Course> {
-    const course = new Course(null, title, year, espb, description);
+    const course = Course.create({
+      title,
+      year,
+      espb,
+      description,
+    });
     return await this.courseRepository.create(course);
   }
 }

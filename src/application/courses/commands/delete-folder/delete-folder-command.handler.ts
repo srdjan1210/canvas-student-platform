@@ -11,6 +11,7 @@ import { IProfessorRepository } from '../../../../domain/specialization/interfac
 import { IUserRepository } from '../../../../domain/auth/interfaces/user-repository.interface';
 import { USER_REPOSITORY } from '../../../auth/auth.constants';
 import { ProfessorNotInCourseException } from '../../../../domain/courses/exceptions/professor-not-in-course.exception';
+import { Course } from '../../../../domain/courses/course';
 
 @CommandHandler(DeleteFolderCommand)
 export class DeleteFolderCommandHandler
@@ -25,16 +26,12 @@ export class DeleteFolderCommandHandler
 
   async execute({ authenticated, folder }: DeleteFolderCommand): Promise<void> {
     const title = folder.split('/')[0];
-    const course = await this.courseRepository.findByTitle(title);
-    if (!course) throw new CourseNotFoundException();
+    const course = await this.courseRepository.findByTitleIncluding(title, {
+      professors: true,
+    });
 
-    const user = await this.userRepository.findByIdPopulated(authenticated);
-    const courses = await this.courseRepository.findAllByProfessor(
-      user.professor.id,
-    );
-    const containsCourse = courses.filter((course) => course.title === title);
-
-    if (!containsCourse) throw new ProfessorNotInCourseException();
+    Course.throwIfNull(course);
+    course.throwIfNotCourseProfessor(authenticated);
 
     await this.storageService.deleteFolder(folder);
   }

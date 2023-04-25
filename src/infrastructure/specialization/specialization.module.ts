@@ -10,8 +10,6 @@ import { ProfessorRepository } from './repositories/professor.repository';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '../persistance/prisma/prisma.module';
 import { ProfessorMapperFactory } from '../courses/factories/professor-mapper.factory';
-import { StudentFactory } from '../../domain/specialization/factories/student.factory';
-import { ProfessorFactory } from '../../domain/specialization/factories/professor.factory';
 import { SpecializationController } from './specialization.controller';
 import { SearchStudentsQueryHandler } from '../../application/specialization/queries/search-students/search-students-query.handler';
 import { SearchProfessorQueryHandler } from '../../application/specialization/queries/search-professors/search-professor-query.handler';
@@ -31,8 +29,6 @@ const providers: Provider[] = [
     useClass: ProfessorRepository,
   },
   StudentMapperFactory,
-  StudentFactory,
-  ProfessorFactory,
   ProfessorMapperFactory,
   ExportStudentsQueryHandler,
   ExportProfessorsQueryHandler,

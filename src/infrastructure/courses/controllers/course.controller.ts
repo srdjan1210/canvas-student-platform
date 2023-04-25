@@ -84,7 +84,7 @@ export class CourseController {
   ) {
     return await this.commandBus.execute(
       new UploadCourseFileCommand(
-        user.professor.id,
+        user.id,
         folder,
         file.originalname,
         file.buffer,
@@ -107,9 +107,12 @@ export class CourseController {
 
   @UseGuards(JwtGuard)
   @Get('/list/folder/:folder')
-  async listFolder(@Param('folder') folder: string) {
+  async listFolder(
+    @Param('folder') folder: string,
+    @Req() { user }: ReqWithUser,
+  ) {
     const files = await this.queryBus.execute(
-      new ListCourseFolderQuery(folder),
+      new ListCourseFolderQuery(user.id, folder),
     );
 
     if (!files) return [];
@@ -137,14 +140,17 @@ export class CourseController {
 
   @UseGuards(JwtGuard)
   @Get('/list/folder')
-  async listRoot() {
-    return await this.queryBus.execute(new ListCourseFolderQuery(''));
+  async listRoot(@Req() { user }: ReqWithUser) {
+    return await this.queryBus.execute(new ListCourseFolderQuery(user.id, ''));
   }
 
   @UseGuards(JwtGuard)
   @Post('/folder/:folder')
-  async createFolder(@Param('folder') folder: string) {
-    await this.commandBus.execute(new CreateFolderCommand(folder));
+  async createFolder(
+    @Param('folder') folder: string,
+    @Req() { user }: ReqWithUser,
+  ) {
+    await this.commandBus.execute(new CreateFolderCommand(user.id, folder));
     return { status: 'SUCCESS' };
   }
 
@@ -347,14 +353,14 @@ export class CourseController {
 
   @Roles(UserRole.PROFESSOR)
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('/:id/announcement')
-  async postAnnouncement(
+  @Post('/:title/announcement')
+  async createAnnouncement(
     @Req() { user }: ReqWithUser,
     @Body() { title, body }: CreateAnnouncementDto,
-    @Param('id', ParseIntPipe) courseId: number,
+    @Param('title') course,
   ) {
     await this.commandBus.execute(
-      new AddAnnouncementCommand(title, body, user.professor.id, courseId),
+      new AddAnnouncementCommand(title, body, user.professor.id, course),
     );
     return { status: 'SUCCESS' };
   }

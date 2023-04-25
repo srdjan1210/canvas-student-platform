@@ -40,18 +40,15 @@ export class CsvParsingService implements ICsvParsingService {
         separator: ',',
       },
     );
-    return result.list.map(
-      (csv) =>
-        new Student(
-          null,
-          csv.name,
-          csv.surname,
-          csv.specializationName,
-          null,
-          parseInt(csv.indexNumber),
-          parseInt(csv.year),
-          csv.fullIndex,
-        ),
+    return result.list.map((csv) =>
+      Student.create({
+        name: csv.name,
+        surname: csv.surname,
+        specializationName: csv.specializationName,
+        indexNumber: parseInt(csv.indexNumber),
+        year: parseInt(csv.year),
+        fullIndex: csv.fullIndex,
+      }),
     );
   }
 
@@ -66,9 +63,13 @@ export class CsvParsingService implements ICsvParsingService {
         separator: ',',
       },
     );
-    return result.list.map(
-      (csv) =>
-        new Professor(parseInt(csv.id), csv.name, csv.surname, csv.title, null),
+    return result.list.map((csv) =>
+      Professor.create({
+        id: parseInt(csv.id),
+        name: csv.name,
+        surname: csv.surname,
+        title: csv.title,
+      }),
     );
   }
 

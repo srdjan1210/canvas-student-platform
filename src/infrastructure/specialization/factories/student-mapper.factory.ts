@@ -34,26 +34,34 @@ export class StudentMapperFactory
     user?: UserEntity;
     specialization?: SpecializationEntity;
   }): Student {
-    return new Student(
+    const userMapped = user
+      ? User.create({
+          id: user.id,
+          email: user.email,
+          password: user.password,
+          role: UserRole.STUDENT,
+        })
+      : null;
+    const specializationMapped = specialization
+      ? Specialization.create({
+          id: specialization.id,
+          shortName: specialization.shortName,
+          fullName: specialization.name,
+        })
+      : null;
+
+    return Student.create({
       id,
       name,
       surname,
       specializationName,
       userId,
       indexNumber,
-      indexYear,
+      year: indexYear,
       fullIndex,
-      specialization
-        ? new Specialization(
-            specialization.id,
-            specialization.shortName,
-            specialization.name,
-          )
-        : null,
-      user
-        ? new User(user.id, user.email, user.password, UserRole.STUDENT)
-        : null,
-    );
+      specialization: specializationMapped,
+      user: userMapped,
+    });
   }
 
   fromModel({

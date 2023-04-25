@@ -6,7 +6,6 @@ import { IUserRepository } from '../../../../domain/auth/interfaces/user-reposit
 import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../../domain/auth/user';
 import { Student } from '../../../../domain/specialization/model/student';
-import { UserFactory } from '../../../../domain/auth/user.factory';
 import { EmailAlreadyTakenException } from '../../../../domain/auth/exceptions/email-already-taken.exception';
 
 @CommandHandler(RegisterStudentCommand)
@@ -29,19 +28,15 @@ export class RegisterStudentCommandHandler
     surname,
   }: RegisterStudentCommand): Promise<User> {
     const hashedPassword = await this.hashingService.hashPassword(password);
-    const student = new Student(
-      null,
+    const student = Student.create({
       name,
       surname,
       specializationName,
-      null,
       indexNumber,
       year,
-      this.createFullIndex(specializationName, indexNumber, year),
-      null,
-      null,
-    );
-    const user: User = UserFactory.create({
+      fullIndex: this.createFullIndex(specializationName, indexNumber, year),
+    });
+    const user = User.create({
       email,
       password: hashedPassword,
       role,

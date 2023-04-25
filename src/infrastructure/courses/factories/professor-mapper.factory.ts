@@ -8,7 +8,7 @@ export class ProfessorMapperFactory
   implements IEntityMapperFactory<ProfessorEntity, Professor>
 {
   fromEntity({ id, title, name, surname, userId }: ProfessorEntity): Professor {
-    return new Professor(id, name, surname, title, userId);
+    return Professor.create({ id, name, surname, title, userId });
   }
 
   fromModel({ id, title, name, surname, userId }: Professor): ProfessorEntity {

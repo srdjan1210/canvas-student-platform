@@ -7,6 +7,7 @@ import { IHashingService } from '../../interfaces/hashing-service.interfaces';
 import { User } from '../../../../domain/auth/user';
 import { Student } from '../../../../domain/specialization/model/student';
 import { UserFactory } from '../../../../domain/auth/user.factory';
+import { EmailAlreadyTakenException } from '../../../../domain/auth/exceptions/email-already-taken.exception';
 
 @CommandHandler(RegisterStudentCommand)
 export class RegisterStudentCommandHandler
@@ -46,6 +47,9 @@ export class RegisterStudentCommandHandler
       role,
       student,
     });
+
+    const exists = await this.userRepository.findByEmail(user.email);
+    if (exists) throw new EmailAlreadyTakenException();
 
     const createdUser = this.eventBus.mergeObjectContext(
       await this.userRepository.createStudent(user),

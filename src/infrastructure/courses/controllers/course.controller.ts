@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
   MaxFileSizeValidator,
   Param,
@@ -12,13 +11,12 @@ import {
   Put,
   Query,
   Req,
-  StreamableFile,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CourseFileDto } from '../dtos/course-file.dto';
 import { UploadCourseFileCommand } from '../../../application/courses/commands/upload-course-file/upload-course-file.command';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DownloadCourseFileCommand } from '../../../application/courses/commands/download-course-file/download-course-file.command';
@@ -49,7 +47,15 @@ import { GetCourseProfessorsQuery } from '../../../application/courses/queries/g
 import { StudentPresenter } from '../../presenters/student.presenter';
 import { ProfessorPresenter } from '../../presenters/professor.presenter';
 import { DeleteFolderCommand } from '../../../application/courses/commands/delete-folder/delete-folder.command';
-
+import { CsvFile } from '../../../domain/shared/csv-file';
+import { ExportStudentsToCsvQuery } from '../../../application/courses/queries/export-students-to-csv/export-students-to-csv.query';
+import { Response } from 'express';
+import { ExportProfessorsToCsvQuery } from '../../../application/courses/queries/export-professors-to-csv/export-professors-to-csv.query';
+import { ImportStudentsFromCsvCommand } from '../../../application/courses/commands/import-students-from-csv/import-students-from-csv.command';
+import { RemoveStudentFromCourseCommand } from '../../../application/courses/commands/remove-student-from-course/remove-student-from-course.command';
+import { RemoveProfessorFromCourseCommand } from '../../../application/courses/commands/remove-professor-from-course/remove-professor-from-course.command';
+import { ImportProfessorsFromCsvCommand } from '../../../application/courses/commands/import-professors-from-csv/import-professors-from-csv.command';
+import { DeleteFileCommand } from '../../../application/courses/commands/delete-file/delete-file.command';
 @Controller('courses')
 export class CourseController {
   constructor(
@@ -92,6 +98,7 @@ export class CourseController {
     @Param('folder') folder: string,
     @Param('file') file: string,
   ) {
+    console.log(folder);
     const downloadLink = await this.commandBus.execute(
       new DownloadCourseFileCommand(folder, file),
     );
@@ -112,8 +119,19 @@ export class CourseController {
   @Roles(UserRole.PROFESSOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Delete('/folder/:folder')
-  async deleteFolder(@Param('folder') folder: string) {
-    await this.commandBus.execute(new DeleteFolderCommand(folder));
+  async deleteFolder(
+    @Req() { user }: ReqWithUser,
+    @Param('folder') folder: string,
+  ) {
+    await this.commandBus.execute(new DeleteFolderCommand(user.id, folder));
+    return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.PROFESSOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('/file/:path')
+  async deleteFile(@Req() { user }: ReqWithUser, @Param('path') path: string) {
+    await this.commandBus.execute(new DeleteFileCommand(user.id, path));
     return { status: 'SUCCESS' };
   }
 
@@ -184,6 +202,32 @@ export class CourseController {
 
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
+  @Delete('/:title/students/:id')
+  async removeStudentFromCourse(
+    @Param('title') title: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.commandBus.execute(
+      new RemoveStudentFromCourseCommand(title, id),
+    );
+    return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('/:title/professors/:id')
+  async removeProfessorFromCourse(
+    @Param('title') title: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.commandBus.execute(
+      new RemoveProfessorFromCourseCommand(title, id),
+    );
+    return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
   @Get('/:title/professors')
   async getCourseProfessors(
     @Param('title') title: string,
@@ -195,6 +239,28 @@ export class CourseController {
     );
     return professors.map((professor) => new ProfessorPresenter(professor));
   }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/:title/professors/csv')
+  async exportProfessorsToCsv(
+    @Param('title') title: string,
+    @Res() res: Response,
+  ) {
+    const stream = await this.queryBus.execute(
+      new ExportProfessorsToCsvQuery(title),
+    );
+
+    const filename = `${title}-professors.csv`;
+
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+
+    stream.pipe(res);
+  }
+
   @Roles(UserRole.ADMINISTRATOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Post('/:title/students/add')
@@ -206,6 +272,77 @@ export class CourseController {
       new AddStudentsToCourseCommand(students, title),
     );
     return { status: 'SUCCESS' };
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('/:title/students/csv')
+  async exportStudentsToCsv(
+    @Param('title') title: string,
+    @Res() res: Response,
+  ) {
+    const stream = await this.queryBus.execute(
+      new ExportStudentsToCsvQuery(title),
+    );
+
+    const filename = `${title}-students.csv`;
+
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+
+    stream.pipe(res);
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('/:title/students/parse')
+  async parseStudentsFromCsv(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileExtensionValidator({
+            regex: /\.(csv)$/,
+          }),
+          new MaxFileSizeValidator({ maxSize: 100000000 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Param('title') title: string,
+  ) {
+    const fl = new CsvFile(file.buffer, file.originalname, file.mimetype);
+    const students = await this.commandBus.execute(
+      new ImportStudentsFromCsvCommand(title, fl),
+    );
+    return students.map((student) => new StudentPresenter(student));
+  }
+
+  @Roles(UserRole.ADMINISTRATOR)
+  @UseGuards(JwtGuard, RoleGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('/:title/professors/parse')
+  async parseProfessorsFromCsv(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileExtensionValidator({
+            regex: /\.(csv)$/,
+          }),
+          new MaxFileSizeValidator({ maxSize: 100000000 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Param('title') title: string,
+  ) {
+    const fl = new CsvFile(file.buffer, file.originalname, file.mimetype);
+    const professors = await this.commandBus.execute(
+      new ImportProfessorsFromCsvCommand(title, fl),
+    );
+    return professors.map((prof) => new ProfessorPresenter(prof));
   }
 
   @Roles(UserRole.PROFESSOR)

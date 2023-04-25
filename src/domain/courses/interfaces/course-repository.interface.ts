@@ -23,4 +23,14 @@ export interface ICourseRepository {
   findAllPaginated(data: Pagination): Promise<Course[]>;
   findCourseStudents(data: CourseStudentsPaginated): Promise<Student[]>;
   findCourseProfessors(data: CourseProfessorsPaginated): Promise<Professor[]>;
+  filterStudentsNotInCourse(
+    title: string,
+    indexes: string[],
+  ): Promise<Student[]>;
+  filterProfessorsNotInCourse(
+    title: string,
+    ids: number[],
+  ): Promise<Professor[]>;
+  removeStudentFromCourse(title: string, studentId: number): Promise<void>;
+  removeProfessorFromCourse(title: string, professorId: number): Promise<void>;
 }

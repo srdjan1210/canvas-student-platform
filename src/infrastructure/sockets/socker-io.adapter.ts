@@ -19,7 +19,7 @@ export class SocketIOAdapter extends IoAdapter {
     const clientPort = parseInt(this.configService.get('CLIENT_PORT'));
 
     const cors = {
-      origin: [`*`],
+      origin: [process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000'],
     };
 
     this.logger.log('Configuring SocketIO server with custom CORS options', {

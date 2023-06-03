@@ -33,39 +33,34 @@ export class ReuploadTestFileCommandHandler
     file,
     authorized,
   }: ReuploadTestFileCommand): Promise<void> {
-    try {
-      const course = await this.courseRepository.findByTitleIncluding(title, {
-        students: true,
-      });
-      const user = await this.userRepository.findByIdPopulated(authorized);
+    const course = await this.courseRepository.findByTitleIncluding(title, {
+      students: true,
+    });
+    const user = await this.userRepository.findByIdPopulated(authorized);
 
-      Course.throwIfNull(course);
-      course.throwIfNotEnrolled(authorized);
-      User.throwIfNull(user);
+    Course.throwIfNull(course);
+    course.throwIfNotEnrolled(authorized);
+    User.throwIfNull(user);
 
-      const studentId = user.student.id;
-      const folder = `test-scores-${testId}`;
-      const filename = `${Date.now()}-${course.id}-${studentId}-${testId}.zip`;
-      await this.storageService.uploadFile(file, folder, filename);
+    const studentId = user.student.id;
+    const folder = `test-scores-${testId}`;
+    const filename = `${Date.now()}-${course.id}-${studentId}-${testId}.zip`;
+    await this.storageService.uploadFile(file, folder, filename);
 
-      const fileUrl = await this.storageService.getSignedDownloadLink(
-        `${folder}/${filename}`,
-      );
+    const fileUrl = await this.storageService.getSignedDownloadLink(
+      `${folder}/${filename}`,
+    );
 
-      const scoreObj = TestScore.create({
-        studentId: user.student.id,
-        courseId: course.id,
-        testId,
-        fileUrl,
-      });
+    const scoreObj = TestScore.create({
+      studentId: user.student.id,
+      courseId: course.id,
+      testId,
+      fileUrl,
+    });
 
-      const existing = await this.scoreRepository.findOrCreate(scoreObj);
-      console.log(existing);
-      existing.upload(fileUrl);
+    const existing = await this.scoreRepository.findOrCreate(scoreObj);
+    existing.upload(fileUrl);
 
-      await this.scoreRepository.update(existing);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.scoreRepository.update(existing);
   }
 }

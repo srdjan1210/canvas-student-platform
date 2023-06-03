@@ -7,6 +7,12 @@ import { TokenPayload } from '../../../domain/auth/token-payload';
 export class JWTService implements IJwtService {
   constructor(private readonly jwtService: JwtService) {}
 
+  verify(token: string): TokenPayload {
+    return this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET,
+    });
+  }
+
   generateToken(payload: TokenPayload) {
     return this.jwtService.sign(payload);
   }

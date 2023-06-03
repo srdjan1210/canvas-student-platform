@@ -18,6 +18,6 @@ export class RemoveStudentFromCourseCommandHandler
     const course = await this.courseRepository.findByTitle(title);
     if (!course) throw new CourseNotFoundException();
 
-    await this.courseRepository.removeStudentFromCourse(title, id);
+    await this.courseRepository.removeStudentFromCourse(course.id, id);
   }
 }

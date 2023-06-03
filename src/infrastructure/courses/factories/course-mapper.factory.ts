@@ -1,27 +1,30 @@
 import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
 import { Course } from '../../../domain/courses/course';
-import { CourseEntity, ProfessorEntity, StudentEntity } from '@prisma/client';
+import {
+  CourseEntity,
+  CourseStudentEntity,
+  ProfessorEntity,
+  StudentEntity,
+  TestEntity,
+  UserEntity,
+} from '@prisma/client';
 import { Student } from '../../../domain/specialization/model/student';
 import { Professor } from '../../../domain/specialization/model/professor';
+import { CourseStudent } from '../../../domain/courses/course-student';
+
+type CourseFactoryEntity = CourseEntity & {
+  students?: (CourseStudentEntity & {
+    student?: StudentEntity & { user?: UserEntity };
+  })[];
+  professors?: ProfessorEntity[];
+};
 
 export class CourseMapperFactory
-  implements
-    IEntityMapperFactory<
-      CourseEntity & {
-        students?: StudentEntity[];
-        professors?: ProfessorEntity[];
-      },
-      Course
-    >
+  implements IEntityMapperFactory<CourseFactoryEntity, Course>
 {
-  fromEntity(
-    entity: CourseEntity & {
-      students?: StudentEntity[];
-      professors?: ProfessorEntity[];
-    },
-  ): Course {
+  fromEntity(entity: CourseFactoryEntity): Course {
     if (!entity) return null;
-    const studentsMapped = this.mapStudents(entity.students);
+    const studentsMapped = this.mapCourseStudents(entity.students);
     const professorsMapped = this.mapProfessors(entity.professors);
 
     return Course.create({
@@ -34,7 +37,14 @@ export class CourseMapperFactory
       professors: professorsMapped,
     });
   }
-  fromModel({ id, title, year, espb, description }: Course) {
+
+  fromModel({
+    id,
+    title,
+    year,
+    espb,
+    description,
+  }: Course): CourseFactoryEntity {
     return {
       id,
       title,
@@ -44,20 +54,36 @@ export class CourseMapperFactory
     };
   }
 
-  private mapStudents = (students: StudentEntity[]) => {
+  private mapCourseStudents = (
+    students: (CourseStudentEntity & {
+      student?: StudentEntity;
+      tests?: TestEntity[];
+    })[],
+  ): CourseStudent[] => {
     return students
-      ? students.map((s) =>
-          Student.create({
-            id: s.id,
-            name: s.name,
-            surname: s.surname,
-            specializationName: s.specializationName,
-            userId: s.userId,
-            indexNumber: s.indexNumber,
-            year: s.indexYear,
-          }),
-        )
+      ? students.map((s) => ({
+          student: this.mapStudent(s.student),
+          course: null,
+          courseId: s.courseId,
+          studentId: s.studentId,
+          score: s.score,
+          tests: [],
+        }))
       : [];
+  };
+
+  private mapStudent = (s: StudentEntity) => {
+    return s
+      ? Student.create({
+          id: s.id,
+          name: s.name,
+          surname: s.surname,
+          specializationName: s.specializationName,
+          userId: s.userId,
+          indexNumber: s.indexNumber,
+          year: s.indexYear,
+        })
+      : null;
   };
 
   private mapProfessors = (professors: ProfessorEntity[]) => {

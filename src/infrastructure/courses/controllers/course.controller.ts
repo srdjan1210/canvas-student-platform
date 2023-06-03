@@ -18,46 +18,50 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UploadCourseFileCommand } from '../../../application/courses/commands/upload-course-file/upload-course-file.command';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { DownloadCourseFileCommand } from '../../../application/courses/commands/download-course-file/download-course-file.command';
-import { ListCourseFolderQuery } from '../../../application/courses/queries/list-course-folder/list-course-folder.query';
-import { CreateCourseDto } from '../dtos/create-course.dto';
-import { CreateCourseCommand } from '../../../application/courses/commands/create-course/create-course.command';
-import { CourseCreatedPresenter } from '../presenters/course-created.presenter';
-import { AddStudentsToCourseDto } from '../dtos/add-students-to-course.dto';
-import { AddStudentsToCourseCommand } from '../../../application/courses/commands/add-student-to-course/add-students-to-course.command';
-import { AddProfessorsToCourseCommand } from '../../../application/courses/commands/add-professor-to-course/add-professors-to-course.command';
-import { AddProfessorsToCourseDto } from '../dtos/add-professors-to-course.dto';
-import { ReqWithUser, RoleGuard } from '../../auth/guards/role.guard';
-import { CreateAnnouncementDto } from '../dtos/create-announcement.dto';
+import { Response } from 'express';
+import { GetAnnouncementQuery } from 'src/application/courses/queries/get-announcement/get-announcement.query';
 import { AddAnnouncementCommand } from '../../../application/courses/commands/add-announcement/add-announcement.command';
+import { AddProfessorsToCourseCommand } from '../../../application/courses/commands/add-professor-to-course/add-professors-to-course.command';
+import { AddStudentsToCourseCommand } from '../../../application/courses/commands/add-student-to-course/add-students-to-course.command';
+import { CreateCourseCommand } from '../../../application/courses/commands/create-course/create-course.command';
+import { CreateFolderCommand } from '../../../application/courses/commands/create-folder/create-folder.command';
+import { DeleteFileCommand } from '../../../application/courses/commands/delete-file/delete-file.command';
+import { DeleteFolderCommand } from '../../../application/courses/commands/delete-folder/delete-folder.command';
+import { DownloadCourseFileCommand } from '../../../application/courses/commands/download-course-file/download-course-file.command';
+import { ImportProfessorsFromCsvCommand } from '../../../application/courses/commands/import-professors-from-csv/import-professors-from-csv.command';
+import { ImportStudentsFromCsvCommand } from '../../../application/courses/commands/import-students-from-csv/import-students-from-csv.command';
+import { RemoveProfessorFromCourseCommand } from '../../../application/courses/commands/remove-professor-from-course/remove-professor-from-course.command';
+import { RemoveStudentFromCourseCommand } from '../../../application/courses/commands/remove-student-from-course/remove-student-from-course.command';
+import { UploadCourseFileCommand } from '../../../application/courses/commands/upload-course-file/upload-course-file.command';
+import { ExportProfessorsToCsvQuery } from '../../../application/courses/queries/export-professors-to-csv/export-professors-to-csv.query';
+import { ExportStudentsToCsvQuery } from '../../../application/courses/queries/export-students-to-csv/export-students-to-csv.query';
+import { GetAllPaginatedQuery } from '../../../application/courses/queries/get-all-paginated/get-all-paginated.query';
+import { GetCourseProfessorsQuery } from '../../../application/courses/queries/get-course-professors/get-course-professors.query';
+import { GetCourseStudentsQuery } from '../../../application/courses/queries/get-course-students/get-course-students.query';
+import { GetProfessorCoursesQuery } from '../../../application/courses/queries/get-professor-courses/get-professor-courses.query';
+import { GetStudentCoursesQuery } from '../../../application/courses/queries/get-student-courses/get-student-courses.query';
+import { ListCourseFolderQuery } from '../../../application/courses/queries/list-course-folder/list-course-folder.query';
 import { UserRole } from '../../../domain/auth/role.enum';
+import { CsvFile } from '../../../domain/shared/csv-file';
 import { Roles } from '../../auth/decorators/role.decorator';
 import { JwtGuard } from '../../auth/guards/jwt.guard';
-import { GetStudentCoursesQuery } from '../../../application/courses/queries/get-student-courses/get-student-courses.query';
+import { ReqWithUser, RoleGuard } from '../../auth/guards/role.guard';
+import { DomainErrorFilter } from '../../error-handling/domain-error.filter';
+import { ProfessorPresenter } from '../../presenters/professor.presenter';
+import { StudentPresenter } from '../../presenters/student.presenter';
+import { AddProfessorsToCourseDto } from '../dtos/add-professors-to-course.dto';
+import { AddStudentsToCourseDto } from '../dtos/add-students-to-course.dto';
+import { CreateAnnouncementDto } from '../dtos/create-announcement.dto';
+import { CreateCourseDto } from '../dtos/create-course.dto';
+import { AnnouncementPresenter } from '../presenters/announcement.presenter';
+import { CourseCreatedPresenter } from '../presenters/course-created.presenter';
+import { CourseFilePresenter } from '../presenters/course-file.presenter';
 import { CoursePresenter } from '../presenters/course.presenter';
 import { DownloadLinkPresenter } from '../presenters/download-link.presenter';
-import { CourseFilePresenter } from '../presenters/course-file.presenter';
-import { CreateFolderCommand } from '../../../application/courses/commands/create-folder/create-folder.command';
-import { GetProfessorCoursesQuery } from '../../../application/courses/queries/get-professor-courses/get-professor-courses.query';
 import { FileExtensionValidator } from '../validators/file-extension.validator';
-import { GetAllPaginatedQuery } from '../../../application/courses/queries/get-all-paginated/get-all-paginated.query';
-import { GetCourseStudentsQuery } from '../../../application/courses/queries/get-course-students/get-course-students.query';
-import { GetCourseProfessorsQuery } from '../../../application/courses/queries/get-course-professors/get-course-professors.query';
-import { StudentPresenter } from '../../presenters/student.presenter';
-import { ProfessorPresenter } from '../../presenters/professor.presenter';
-import { DeleteFolderCommand } from '../../../application/courses/commands/delete-folder/delete-folder.command';
-import { CsvFile } from '../../../domain/shared/csv-file';
-import { ExportStudentsToCsvQuery } from '../../../application/courses/queries/export-students-to-csv/export-students-to-csv.query';
-import { Response } from 'express';
-import { ExportProfessorsToCsvQuery } from '../../../application/courses/queries/export-professors-to-csv/export-professors-to-csv.query';
-import { ImportStudentsFromCsvCommand } from '../../../application/courses/commands/import-students-from-csv/import-students-from-csv.command';
-import { RemoveStudentFromCourseCommand } from '../../../application/courses/commands/remove-student-from-course/remove-student-from-course.command';
-import { RemoveProfessorFromCourseCommand } from '../../../application/courses/commands/remove-professor-from-course/remove-professor-from-course.command';
-import { ImportProfessorsFromCsvCommand } from '../../../application/courses/commands/import-professors-from-csv/import-professors-from-csv.command';
-import { DeleteFileCommand } from '../../../application/courses/commands/delete-file/delete-file.command';
-import { DomainErrorFilter } from '../../error-handling/domain-error.filter';
+import { ListCourseFileTreeQuery } from '../../../application/courses/queries/list-course-file-tree/list-course-file-tree.query';
+import { GetCourseAnnouncementsQuery } from '../../../application/courses/queries/get-course-announcements/get-course-announcements.query';
 @Controller('courses')
 @UseFilters(DomainErrorFilter)
 export class CourseController {
@@ -101,7 +105,6 @@ export class CourseController {
     @Param('folder') folder: string,
     @Param('file') file: string,
   ) {
-    console.log(folder);
     const downloadLink = await this.commandBus.execute(
       new DownloadCourseFileCommand(folder, file),
     );
@@ -122,6 +125,18 @@ export class CourseController {
     return files.map((file) => new CourseFilePresenter(file));
   }
 
+  @UseGuards(JwtGuard)
+  @Get('/:title/files/tree')
+  async listFileTree(
+    @Param('title') title: string,
+    @Req() { user }: ReqWithUser,
+  ) {
+    const files = await this.queryBus.execute(
+      new ListCourseFileTreeQuery(user.id, title),
+    );
+    return files;
+  }
+
   @Roles(UserRole.PROFESSOR)
   @UseGuards(JwtGuard, RoleGuard)
   @Delete('/folder/:folder')
@@ -129,6 +144,7 @@ export class CourseController {
     @Req() { user }: ReqWithUser,
     @Param('folder') folder: string,
   ) {
+    console.log(folder);
     await this.commandBus.execute(new DeleteFolderCommand(user.id, folder));
     return { status: 'SUCCESS' };
   }
@@ -356,7 +372,7 @@ export class CourseController {
 
   @Roles(UserRole.PROFESSOR)
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('/:title/announcement')
+  @Post('/:title/announcements')
   async createAnnouncement(
     @Req() { user }: ReqWithUser,
     @Body() { title, body }: CreateAnnouncementDto,
@@ -366,6 +382,31 @@ export class CourseController {
       new AddAnnouncementCommand(title, body, user.professor.id, course),
     );
     return { status: 'SUCCESS' };
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/:title/announcements')
+  async getCourseAnnouncements(
+    @Req() { user }: ReqWithUser,
+    @Param('title') title,
+  ) {
+    const announcements = await this.queryBus.execute(
+      new GetCourseAnnouncementsQuery(user.id, title),
+    );
+    return announcements.map((ann) => new AnnouncementPresenter(ann));
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/:title/announcements/:id')
+  async getAnnouncement(
+    @Req() { user }: ReqWithUser,
+    @Param('title') title: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const announcement = await this.queryBus.execute(
+      new GetAnnouncementQuery(user.id, title, id),
+    );
+    return new AnnouncementPresenter(announcement);
   }
 
   @Roles(UserRole.STUDENT)

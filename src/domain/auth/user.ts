@@ -11,6 +11,7 @@ export class User extends AggregateRoot {
     public readonly email: string,
     public readonly password: string,
     public readonly role: UserRole,
+    public readonly avatar: string | null,
     public readonly student: Student = null,
     public readonly professor: Professor = null,
   ) {
@@ -40,7 +41,8 @@ export class User extends AggregateRoot {
     role,
     student,
     professor,
+    avatar,
   }: Partial<User>) {
-    return new User(id, email, password, role, student, professor);
+    return new User(id, email, password, role, avatar, student, professor);
   }
 }

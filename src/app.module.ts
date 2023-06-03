@@ -5,6 +5,7 @@ import { CourseModule } from './infrastructure/courses/course.module';
 import { WebsocketModule } from './infrastructure/sockets/websocket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { SpecializationModule } from './infrastructure/specialization/specialization.module';
+import { ScoresModule } from './infrastructure/scores/scores.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -21,6 +22,7 @@ import { SpecializationModule } from './infrastructure/specialization/specializa
     CourseModule,
     WebsocketModule,
     SpecializationModule,
+    ScoresModule,
   ],
   controllers: [],
   providers: [],

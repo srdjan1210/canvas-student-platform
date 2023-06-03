@@ -1,4 +1,5 @@
 import { User } from '../user';
+import { Announcement } from '../../courses/announcement';
 
 export interface IUserRepository {
   create(user: User): Promise<User>;

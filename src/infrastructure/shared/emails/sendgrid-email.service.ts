@@ -42,7 +42,7 @@ export class SendgridEmailService implements IEmailService {
     await Promise.all(
       emails.map(async (email) => {
         const content: EmailContent = {
-          text: announcement.body,
+          html: announcement.body,
           subject: announcement.title,
           to: email,
         };
@@ -51,13 +51,14 @@ export class SendgridEmailService implements IEmailService {
     );
   }
 
-  private async sendEmail({ text, subject, to }: EmailContent) {
+  private async sendEmail({ text, subject, to, html }: EmailContent) {
     const from = this.configService.get(SENDGRID_SENDER);
     const content: sendgrid.MailDataRequired = {
       from,
       subject,
       to,
       text,
+      html,
     };
 
     await sendgrid.send(content);

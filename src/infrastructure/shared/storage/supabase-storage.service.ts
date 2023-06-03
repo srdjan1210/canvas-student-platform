@@ -9,6 +9,7 @@ import {
 } from './storage.constants';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { BadRequestException } from '@nestjs/common';
+import { FileTreeNode } from '../../../domain/courses/types/file-tree-node.type';
 @Injectable()
 export class SupabaseStorageService implements IStorageService {
   private readonly client: StorageClient;
@@ -24,7 +25,9 @@ export class SupabaseStorageService implements IStorageService {
 
   async getSignedDownloadLink(path: string): Promise<string> {
     const bucket = await this.getMainBucket();
-    const resp = await bucket.createSignedUrl(path, 36000, { download: true });
+    const resp = await bucket.createSignedUrl(path, 36000000, {
+      download: true,
+    });
     return resp.data.signedUrl;
   }
   async uploadFile(
@@ -86,5 +89,31 @@ export class SupabaseStorageService implements IStorageService {
       paths.push(...subFiles);
     }
     return paths;
+  }
+
+  async listFileTree(folder: string): Promise<FileTreeNode[]> {
+    const bucket = await this.getMainBucket();
+    const items = await bucket.list(folder);
+    const subfolders: FileTreeNode[] = [];
+    await Promise.all(
+      items.data.map(async (item) => {
+        if (item.metadata !== null) {
+          subfolders.push({
+            subfolders: [],
+            filename: item.name,
+            type: 'file',
+          });
+          return;
+        }
+        const subs = await this.listFileTree(`${folder}/${item.name}`);
+
+        subfolders.push({
+          subfolders: subs,
+          filename: item.name,
+          type: 'folder',
+        });
+      }),
+    );
+    return subfolders;
   }
 }

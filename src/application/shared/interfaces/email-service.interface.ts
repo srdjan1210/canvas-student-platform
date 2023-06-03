@@ -1,7 +1,8 @@
 import { Announcement } from '../../../domain/courses/announcement';
 
 export type EmailContent = {
-  text: string;
+  html?: string;
+  text?: string;
   subject: string;
   to: string;
 };

@@ -46,12 +46,18 @@ export class StudentRepository implements IStudentRepository {
       select: {
         students: {
           include: {
-            user: true,
+            student: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },
     });
-    return course.students.map((s) => this.studentMapperFactory.fromEntity(s));
+    return course.students.map((s) =>
+      this.studentMapperFactory.fromEntity(s.student),
+    );
   }
 
   async searchStudents(
@@ -103,7 +109,9 @@ export class StudentRepository implements IStudentRepository {
           {
             courses: {
               none: {
-                title: course,
+                course: {
+                  title: course,
+                },
               },
             },
           },

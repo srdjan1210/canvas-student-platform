@@ -8,6 +8,7 @@ import { CourseNotFoundException } from '../../domain/courses/exceptions/course-
 import { NotCourseProfessorException } from '../../domain/courses/exceptions/not-course-professor.exception';
 import { ProfessorNotInCourseException } from '../../domain/courses/exceptions/professor-not-in-course.exception';
 import { StudentNotEnrolledInCourseException } from '../../domain/courses/exceptions/student-not-enrolled-in-course.exception';
+import { PointsNegativeValueException } from '../../domain/scores/exceptions/points-negative-value.exception';
 export class DomainErrorFilter implements ExceptionFilter<BaseException> {
   catch(exception: BaseException, host: ArgumentsHost): any {
     const context = host.switchToHttp();
@@ -29,6 +30,9 @@ export class DomainErrorFilter implements ExceptionFilter<BaseException> {
       return this.sendErrorResponse(resp, HttpStatus.FORBIDDEN, message);
     if (exception instanceof StudentNotEnrolledInCourseException)
       return this.sendErrorResponse(resp, HttpStatus.FORBIDDEN, message);
+    //Scores
+    if (exception instanceof PointsNegativeValueException)
+      return this.sendErrorResponse(resp, HttpStatus.BAD_REQUEST, message);
     this.sendErrorResponse(resp, HttpStatus.INTERNAL_SERVER_ERROR, message);
   }
 

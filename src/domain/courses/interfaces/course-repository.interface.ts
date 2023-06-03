@@ -1,10 +1,13 @@
-import { Course } from '../course';
-import { Pagination } from '../types/pagination.type';
-import { CourseStudentsPaginated } from '../types/course-students-paginated.type';
-import { Student } from '../../specialization/model/student';
+import { User } from 'src/domain/auth/user';
 import { Professor } from '../../specialization/model/professor';
-import { CourseProfessorsPaginated } from '../types/course-professors-paginated.type';
+import { Student } from '../../specialization/model/student';
+import { Announcement } from '../announcement';
+import { Course } from '../course';
+import { AnnouncementPopulateOptions } from '../types/announcement-populate.options';
 import { CoursePopulateOptions } from '../types/course-populate-options.type';
+import { CourseProfessorsPaginated } from '../types/course-professors-paginated.type';
+import { CourseStudentsPaginated } from '../types/course-students-paginated.type';
+import { Pagination } from '../types/pagination.type';
 
 export interface ICourseRepository {
   findById(id: number): Promise<Course>;
@@ -13,10 +16,16 @@ export interface ICourseRepository {
     including: { professors?: boolean; students?: boolean },
   ): Promise<Course>;
   findByTitle(title: string): Promise<Course>;
-  update(course: Course): Promise<void>;
+  update(
+    course: Course,
+    ignore?: { students?: boolean; professors?: boolean },
+  ): Promise<void>;
   create(course: Course): Promise<Course>;
   findAllByStudent(studentId: number): Promise<Course[]>;
-  findByTitleIncluding(title: string, including: CoursePopulateOptions);
+  findByTitleIncluding(
+    title: string,
+    including: CoursePopulateOptions,
+  ): Promise<Course>;
   findAllByProfessor(professorId: number): Promise<Course[]>;
   findAllPaginated(data: Pagination): Promise<Course[]>;
   findCourseStudents(data: CourseStudentsPaginated): Promise<Student[]>;
@@ -29,6 +38,12 @@ export interface ICourseRepository {
     title: string,
     ids: number[],
   ): Promise<Professor[]>;
-  removeStudentFromCourse(title: string, studentId: number): Promise<void>;
+  removeStudentFromCourse(courseId: number, studentId: number): Promise<void>;
   removeProfessorFromCourse(title: string, professorId: number): Promise<void>;
+  findAnnouncement(
+    title: string,
+    id: number,
+    populate: AnnouncementPopulateOptions,
+  ): Promise<Announcement>;
+  findAllMembers(courseId: number): Promise<User[]>;
 }

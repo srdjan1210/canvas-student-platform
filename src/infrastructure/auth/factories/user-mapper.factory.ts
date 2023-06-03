@@ -1,9 +1,9 @@
-import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
-import { User } from '../../../domain/auth/user';
 import { ProfessorEntity, StudentEntity, UserEntity } from '@prisma/client';
 import { UserRole } from '../../../domain/auth/role.enum';
-import { Student } from '../../../domain/specialization/model/student';
+import { User } from '../../../domain/auth/user';
 import { Professor } from '../../../domain/specialization/model/professor';
+import { Student } from '../../../domain/specialization/model/student';
+import { IEntityMapperFactory } from '../../shared/factories/entity-mapper-factory.interface';
 
 export class UserEntityMapperFactory
   implements
@@ -24,6 +24,7 @@ export class UserEntityMapperFactory
     password,
     student,
     professor,
+    avatar,
   }: UserEntity & {
     student?: StudentEntity;
     professor?: ProfessorEntity;
@@ -54,18 +55,20 @@ export class UserEntityMapperFactory
       id,
       email,
       password,
+      avatar,
       role: this.userRoles[role],
       student: studentMapped,
       professor: professorMapped,
     });
   }
 
-  fromModel({ id, email, role, password }: User) {
+  fromModel({ id, email, role, password, avatar }: User) {
     return {
       id,
       email,
       role,
       password,
+      avatar,
     } as UserEntity;
   }
 }

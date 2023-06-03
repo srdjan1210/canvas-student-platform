@@ -14,20 +14,21 @@ model UserEntity {
   role      UserEntityRole
   student   StudentEntity?
   professor ProfessorEntity?
+  avatar    String?
 }
 
 model StudentEntity {
-  id                 Int                  @id @default(autoincrement())
+  id                 Int                   @id @default(autoincrement())
   name               String
   surname            String
   specializationName String
-  specialization     SpecializationEntity @relation(fields: [specializationName], references: [shortName])
+  specialization     SpecializationEntity  @relation(fields: [specializationName], references: [shortName])
   indexNumber        Int
   indexYear          Int
   fullIndex          String
-  userId             Int?                 @unique
-  user               UserEntity?          @relation(fields: [userId], references: [id])
-  courses            CourseEntity[]
+  userId             Int?                  @unique
+  user               UserEntity?           @relation(fields: [userId], references: [id])
+  courses            CourseStudentEntity[]
 
   @@unique([specializationName, indexNumber, indexYear])
 }
@@ -58,9 +59,23 @@ model CourseEntity {
   espb            Int
   description     String                 @default("")
   specializations SpecializationEntity[]
-  students        StudentEntity[]
   professors      ProfessorEntity[]
   announcements   AnnouncementEntity[]
+  tests           TestEntity[]
+  students        CourseStudentEntity[]
+}
+
+model CourseStudentEntity {
+  courseId  Int
+  studentId Int
+  score     Int
+
+  course  CourseEntity  @relation(fields: [courseId], references: [id])
+  student StudentEntity @relation(fields: [studentId], references: [id])
+
+  testScores TestScoreEntity[]
+
+  @@id([courseId, studentId])
 }
 
 model AnnouncementEntity {
@@ -71,6 +86,31 @@ model AnnouncementEntity {
   professorId Int
   course      CourseEntity    @relation(fields: [courseId], references: [id])
   professor   ProfessorEntity @relation(fields: [professorId], references: [id])
+  createdAt   DateTime        @default(now())
+}
+
+model TestScoreEntity {
+  courseId  Int
+  studentId Int
+  testId    Int
+  points    Float
+  fileUrl   String?
+
+  student CourseStudentEntity @relation(fields: [courseId, studentId], references: [courseId, studentId])
+  test    TestEntity          @relation(fields: [testId], references: [id])
+
+  @@id([courseId, studentId, testId])
+}
+
+model TestEntity {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String
+  maxPoints   Float
+  courseId    Int
+  deadlineForSubmission DateTime?
+  course      CourseEntity      @relation(fields: [courseId], references: [id])
+  testScores  TestScoreEntity[]
 }
 
 generator client {

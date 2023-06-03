@@ -1,39 +1,65 @@
+import { Inject } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import {
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { OnEvent } from '@nestjs/event-emitter';
+import { USER_REPOSITORY } from 'src/application/auth/auth.constants';
+import { IUserRepository } from 'src/domain/auth/interfaces/user-repository.interface';
 import { AnnouncementCreatedPayload } from '../../application/courses/events/internal/announcement-created-payload.dto';
+import { SocketWithUser } from './socket-with-user.type';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class NotificationGateway {
+export default class NotificationGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
-  server: Server;
+  private server: Server;
+  private connections: Map<number, Socket> = new Map();
 
-  private connections: Map<Socket, number> = new Map();
+  constructor(
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+  ) {}
 
-  @SubscribeMessage('register')
-  registerUser(@MessageBody() data: number, @ConnectedSocket() client: Socket) {
-    this.connections.set(client, data);
+  async handleConnection(client: SocketWithUser, ...args: any[]) {
+    const userId = client.userId;
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      client.disconnect();
+    }
+    this.connections.set(userId, client);
   }
+
+  handleDisconnect(client: SocketWithUser) {
+    const userId = client.userId;
+    this.connections.delete(userId);
+  }
+
+  afterInit(): void {
+    console.log(`Websocket Gateway initialized.`);
+  }
+
   @OnEvent('announcement.created')
   handleAnnouncementCreated({ ids, notification }: AnnouncementCreatedPayload) {
-    this.connections.forEach((value: number, key: Socket) => {
-      if (ids.includes(value))
-        key.emit('notification', {
+    // console.log(ids, notification);
+    this.connections.forEach((socket: Socket, key: number) => {
+      if (ids.includes(key))
+        socket.emit('notification', {
           id: notification.id,
           body: notification.body,
           title: notification.title,
-          professorName: notification.professor.name,
-          professorSurname: notification.professor.surname,
+          professorName: notification?.professor?.name,
+          professorSurname: notification?.professor?.surname,
+          createdAt: notification?.createdAt,
+          avatar: notification?.professor?.user?.avatar,
         });
     });
   }

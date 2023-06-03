@@ -1,15 +1,19 @@
-import { ICourseRepository } from '../../../domain/courses/interfaces/course-repository.interface';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
-import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
-import { CourseMapperFactory } from '../factories/course-mapper.factory';
+import { User } from 'src/domain/auth/user';
+import { Announcement } from 'src/domain/courses/announcement';
 import { Course } from '../../../domain/courses/course';
+import { ICourseRepository } from '../../../domain/courses/interfaces/course-repository.interface';
+import { AnnouncementPopulateOptions } from '../../../domain/courses/types/announcement-populate.options';
+import { CoursePopulateOptions } from '../../../domain/courses/types/course-populate-options.type';
 import { CourseProfessorsPaginated } from '../../../domain/courses/types/course-professors-paginated.type';
+import { CourseStudentsPaginated } from '../../../domain/courses/types/course-students-paginated.type';
 import { Professor } from '../../../domain/specialization/model/professor';
 import { Student } from '../../../domain/specialization/model/student';
-import { CourseStudentsPaginated } from '../../../domain/courses/types/course-students-paginated.type';
+import { PrismaProvider } from '../../persistance/prisma/prisma.provider';
 import { StudentMapperFactory } from '../../specialization/factories/student-mapper.factory';
+import { AnnouncementMapperFactory } from '../factories/announcement-mapper.factory';
+import { CourseMapperFactory } from '../factories/course-mapper.factory';
 import { ProfessorMapperFactory } from '../factories/professor-mapper.factory';
-import { CoursePopulateOptions } from '../../../domain/courses/types/course-populate-options.type';
 
 @Injectable()
 export class CourseRepository implements ICourseRepository {
@@ -18,14 +22,16 @@ export class CourseRepository implements ICourseRepository {
     private readonly prisma: PrismaProvider,
     private readonly studentMapperFactory: StudentMapperFactory,
     private readonly professorMapperFactory: ProfessorMapperFactory,
+    private readonly announcementMapperFactory: AnnouncementMapperFactory,
   ) {}
 
-  async create({ title, year, espb }: Course): Promise<Course> {
+  async create({ title, year, espb, description }: Course): Promise<Course> {
     const created = await this.prisma.courseEntity.create({
       data: {
         title,
         year,
         espb,
+        description,
       },
     });
     return this.courseMapperFactory.fromEntity(created);
@@ -38,38 +44,64 @@ export class CourseRepository implements ICourseRepository {
     return this.courseMapperFactory.fromEntity(course);
   }
 
-  async update({
-    id,
-    title,
-    year,
-    espb,
-    professors,
-    students,
-    announcements,
-  }: Course): Promise<void> {
+  async update(
+    {
+      id,
+      title,
+      year,
+      espb,
+      professors,
+      students,
+      announcements,
+      tests,
+    }: Course,
+    ignore: { students?: boolean; professors?: boolean } = {},
+  ): Promise<void> {
     await this.prisma.courseEntity.update({
       data: {
         title,
         year,
         espb,
-        professors: {
-          connect: professors.map((p) => ({
-            id: p.id,
-          })),
-        },
+        professors:
+          ignore.professors == true
+            ? undefined
+            : {
+                connect: professors.map((p) => ({
+                  id: p.id,
+                })),
+              },
         students: {
-          connect: [
-            ...students.map((s) => ({
-              id: s.id,
+          createMany: {
+            data: [
+              ...students.map((s) => ({
+                score: 0,
+                studentId: s.studentId,
+              })),
+            ],
+            skipDuplicates: true,
+          },
+        },
+        announcements: {
+          create: [
+            ...announcements.map((a) => ({
+              title: a.title,
+              body: a.body,
+              professorId: a.professorId,
             })),
           ],
         },
-        announcements: {
-          create: announcements.map((a) => ({
-            title: a.title,
-            body: a.body,
-            professorId: a.professorId,
-          })),
+        tests: {
+          createMany: {
+            data: [
+              ...tests.map((test) => ({
+                title: test.title,
+                maxPoints: test.maxPoints,
+                description: test.description,
+                deadlineForSubmission: test.deadlineForSubmission,
+              })),
+            ],
+            skipDuplicates: true,
+          },
         },
       },
       where: {
@@ -86,7 +118,13 @@ export class CourseRepository implements ICourseRepository {
       where: { id },
       include: {
         professors: including.professors,
-        students: including.students,
+        students: including.students
+          ? {
+              include: {
+                student: true,
+              },
+            }
+          : undefined,
       },
     });
     return this.courseMapperFactory.fromEntity(course);
@@ -106,7 +144,7 @@ export class CourseRepository implements ICourseRepository {
       where: {
         students: {
           some: {
-            id: studentId,
+            studentId,
           },
         },
       },
@@ -117,13 +155,19 @@ export class CourseRepository implements ICourseRepository {
 
   async findByTitleIncluding(
     title: string,
-    { students, professors }: CoursePopulateOptions,
+    { students = false, professors = false }: CoursePopulateOptions,
   ) {
     const course = await this.prisma.courseEntity.findUnique({
       where: { title },
       include: {
         professors: professors ? true : undefined,
-        students: students ? true : undefined,
+        students: students
+          ? {
+              include: {
+                student: true,
+              },
+            }
+          : undefined,
       },
     });
     return this.courseMapperFactory.fromEntity(course);
@@ -190,7 +234,9 @@ export class CourseRepository implements ICourseRepository {
       where: {
         courses: {
           some: {
-            title,
+            course: {
+              title,
+            },
           },
         },
       },
@@ -210,8 +256,10 @@ export class CourseRepository implements ICourseRepository {
     const students = await this.prisma.studentEntity.findMany({
       where: {
         courses: {
-          none: {
-            title,
+          some: {
+            course: {
+              title,
+            },
           },
         },
         fullIndex: {
@@ -226,17 +274,20 @@ export class CourseRepository implements ICourseRepository {
   }
 
   async removeStudentFromCourse(
-    title: string,
+    courseId: number,
     studentId: number,
   ): Promise<void> {
     await this.prisma.courseEntity.update({
       where: {
-        title,
+        id: courseId,
       },
       data: {
         students: {
-          disconnect: {
-            id: studentId,
+          delete: {
+            courseId_studentId: {
+              studentId,
+              courseId,
+            },
           },
         },
       },
@@ -281,5 +332,52 @@ export class CourseRepository implements ICourseRepository {
     return professors.map((professor) =>
       this.professorMapperFactory.fromEntity(professor),
     );
+  }
+
+  async findAnnouncement(
+    title: string,
+    id: number,
+    { professor, course }: AnnouncementPopulateOptions,
+  ): Promise<Announcement> {
+    const announcement = await this.prisma.announcementEntity.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        professor: professor ? true : undefined,
+        course: course ? true : undefined,
+      },
+    });
+    if (!announcement) return null;
+
+    return this.announcementMapperFactory.fromEntity(announcement);
+  }
+
+  async findAllMembers(courseId: number): Promise<User[]> {
+    const users = await this.prisma.userEntity.findMany({
+      where: {
+        OR: [
+          {
+            professor: {
+              courses: {
+                some: {
+                  id: courseId,
+                },
+              },
+            },
+          },
+          {
+            student: {
+              courses: {
+                some: {
+                  courseId,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+    return users.map((user) => User.create({ id: user.id, email: user.email }));
   }
 }

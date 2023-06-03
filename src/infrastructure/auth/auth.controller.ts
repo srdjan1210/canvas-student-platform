@@ -1,5 +1,3 @@
-import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
-import { CommandBus } from '@nestjs/cqrs';
 import {
   Body,
   Get,
@@ -10,20 +8,22 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
+import { CommandBus } from '@nestjs/cqrs';
 import { LoginCommand } from '../../application/auth/commands/login/login.command';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterStudentDto } from './dtos/register-student.dto';
-import { UserRole } from '../../domain/auth/role.enum';
-import { RegisterProfessorDto } from './dtos/register-professor.dto';
-import { UserRegisteredPresenter } from './presenters/user-registered.presenter';
-import { LoggedInPresenter } from './presenters/logged-in.presenter';
-import { Roles } from './decorators/role.decorator';
-import { JwtGuard } from './guards/jwt.guard';
-import { ReqWithUser, RoleGuard } from './guards/role.guard';
 import { RegisterProfessorCommand } from '../../application/auth/commands/register-professor/register-professor.command';
 import { RegisterStudentCommand } from '../../application/auth/commands/register-student/register-student.command';
-import { ProfilePresenter } from './presenters/profile.presenter';
+import { UserRole } from '../../domain/auth/role.enum';
 import { DomainErrorFilter } from '../error-handling/domain-error.filter';
+import { Roles } from './decorators/role.decorator';
+import { LoginDto } from './dtos/login.dto';
+import { RegisterProfessorDto } from './dtos/register-professor.dto';
+import { RegisterStudentDto } from './dtos/register-student.dto';
+import { JwtGuard } from './guards/jwt.guard';
+import { ReqWithUser, RoleGuard } from './guards/role.guard';
+import { LoggedInPresenter } from './presenters/logged-in.presenter';
+import { ProfilePresenter } from './presenters/profile.presenter';
+import { UserRegisteredPresenter } from './presenters/user-registered.presenter';
 
 @Controller('auth')
 @UseFilters(DomainErrorFilter)

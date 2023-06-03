@@ -1,13 +1,17 @@
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { AddAnnouncementCommand } from './add-announcement.command';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import { COURSE_REPOSITORY } from '../../../../domain/courses/course.constants';
-import { ICourseRepository } from '../../../../domain/courses/interfaces/course-repository.interface';
-import { CourseNotFoundException } from '../../../../domain/courses/exceptions/course-not-found.exception';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { AnnouncementCreatedEvent } from 'src/domain/courses/events/announcement-created.event';
+import { IAnnouncementRepository } from 'src/domain/courses/interfaces/announcement-repository.interface';
 import { Announcement } from '../../../../domain/courses/announcement';
-import { AnnouncementCreatedEvent } from '../../../../domain/courses/events/announcement-created.event';
-import { PROFESSOR_REPOSITORY } from '../../../../domain/specialization/specialization.constants';
-import { IProfessorRepository } from '../../../../domain/specialization/interfaces/professor-repository.interface';
+import {
+  ANNOUNCEMENT_REPOSITORY,
+  COURSE_REPOSITORY,
+} from '../../../../domain/courses/course.constants';
+import { CourseNotFoundException } from '../../../../domain/courses/exceptions/course-not-found.exception';
+import { ICourseRepository } from '../../../../domain/courses/interfaces/course-repository.interface';
+import { ISanitizationService } from '../../../../domain/shared/sanitization-service.interface';
+import { SANITIZATION_SERVICE } from '../../../../infrastructure/shared/sanitization/sanitization.constants';
+import { AddAnnouncementCommand } from './add-announcement.command';
 
 @CommandHandler(AddAnnouncementCommand)
 export class AddAnnouncementCommandHandler
@@ -16,9 +20,11 @@ export class AddAnnouncementCommandHandler
   constructor(
     @Inject(COURSE_REPOSITORY)
     private readonly courseRepository: ICourseRepository,
-    @Inject(PROFESSOR_REPOSITORY)
-    private readonly professorRepository: IProfessorRepository,
-    private readonly eventBus: EventPublisher,
+    @Inject(SANITIZATION_SERVICE)
+    private readonly sanitizationService: ISanitizationService,
+    @Inject(ANNOUNCEMENT_REPOSITORY)
+    private readonly announcementRepository: IAnnouncementRepository,
+    private readonly eventBus: EventBus,
   ) {}
   async execute({
     title,
@@ -26,20 +32,21 @@ export class AddAnnouncementCommandHandler
     course: courseName,
     professorId,
   }: AddAnnouncementCommand): Promise<void> {
-    const course = this.eventBus.mergeObjectContext(
-      await this.courseRepository.findByTitle(courseName),
-    );
+    const course = await this.courseRepository.findByTitle(courseName);
+
+    title = this.sanitizationService.sanitizeHtml(title);
+    body = this.sanitizationService.sanitizeHtml(body);
+
     if (!course) throw new CourseNotFoundException();
-    const announcement = new Announcement(
-      null,
+
+    const announcement = Announcement.create({
       title,
       body,
-      course.id,
+      courseId: course.id,
       professorId,
-    );
-    course.addAnnouncement(announcement);
-    await this.courseRepository.update(course);
-    course.apply(new AnnouncementCreatedEvent(announcement));
-    course.commit();
+    });
+
+    const saved = await this.announcementRepository.create(announcement);
+    this.eventBus.publish(new AnnouncementCreatedEvent(saved));
   }
 }

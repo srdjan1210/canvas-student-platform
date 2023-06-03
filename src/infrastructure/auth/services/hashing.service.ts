@@ -1,6 +1,6 @@
-import { IHashingService } from '../../../application/auth/interfaces/hashing-service.interfaces';
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import * as bcrypt from 'bcrypt';
+import { IHashingService } from '../../../application/auth/interfaces/hashing-service.interfaces';
 
 @Injectable()
 export class HashingService implements IHashingService {
@@ -8,7 +8,6 @@ export class HashingService implements IHashingService {
     password: string,
     existingPassword: string,
   ): Promise<boolean> {
-    console.log(password, existingPassword);
     return bcrypt.compare(password, existingPassword);
   }
 

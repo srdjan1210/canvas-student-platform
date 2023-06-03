@@ -144,7 +144,6 @@ export class CourseController {
     @Req() { user }: ReqWithUser,
     @Param('folder') folder: string,
   ) {
-    console.log(folder);
     await this.commandBus.execute(new DeleteFolderCommand(user.id, folder));
     return { status: 'SUCCESS' };
   }

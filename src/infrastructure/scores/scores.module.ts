@@ -26,6 +26,7 @@ import { CourseTestMapperFactory } from './factories/course-test-mapper.factory'
 import { DeleteTestCommandHandler } from '../../application/scores/commands/delete-test/delete-test-command.handler';
 import { GetCourseStudentTestScoresQueryHandler } from '../../application/scores/queries/get-course-student-test-scores/get-course-student-test-scores-query.handler';
 import { GetStudentTestScoresWithNotSubmittedQueryHandler } from '../../application/scores/queries/get-student-test-scores-with-not-submitted/get-student-test-scores-with-not-submitted-query.handler';
+import { TestCreatedEventHandler } from '../../application/scores/events/test-created-event.handler';
 
 const commands: Provider[] = [
   CreateScoreCommandHandler,
@@ -42,6 +43,7 @@ const queries: Provider[] = [
   GetCourseStudentTestScoresQueryHandler,
   GetStudentTestScoresWithNotSubmittedQueryHandler,
 ];
+const events: Provider[] = [TestCreatedEventHandler];
 const providers: Provider[] = [
   TestScoreMapperFactory,
   {
@@ -64,7 +66,7 @@ const providers: Provider[] = [
     SpecializationModule,
     AuthModule,
   ],
-  providers: [...commands, ...queries, ...providers],
+  providers: [...commands, ...queries, ...providers, ...events],
   exports: [],
   controllers: [ScoreController],
 })

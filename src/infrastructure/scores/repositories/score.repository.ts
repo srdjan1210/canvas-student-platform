@@ -38,7 +38,6 @@ export class ScoreRepository implements IScoreRepository {
     fileUrl,
     points = 0,
   }: TestScore): Promise<TestScore> {
-    console.log(courseId, testId, studentId, fileUrl, points);
     const updated = await this.prisma.testScoreEntity.update({
       where: {
         courseId_studentId_testId: {

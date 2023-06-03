@@ -8,6 +8,7 @@ export class AnnouncementPresenter {
   public body: string;
   public avatar: string;
   public createdAt: Date;
+  public courseTitle: string;
   constructor({ title, id, body, course, professor, createdAt }: Announcement) {
     this.id = id;
     this.professorName = professor?.name;
@@ -16,5 +17,6 @@ export class AnnouncementPresenter {
     this.body = body;
     this.createdAt = createdAt;
     this.avatar = professor?.user?.avatar;
+    this.courseTitle = course?.title;
   }
 }

@@ -96,7 +96,7 @@ model TestScoreEntity {
   points    Float
   fileUrl   String?
 
-  student CourseStudentEntity @relation(fields: [courseId, studentId], references: [courseId, studentId])
+  student CourseStudentEntity @relation(fields: [courseId, studentId], references: [courseId, studentId], onDelete: Cascade)
   test    TestEntity          @relation(fields: [testId], references: [id])
 
   @@id([courseId, studentId, testId])

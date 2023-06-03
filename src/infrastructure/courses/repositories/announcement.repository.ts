@@ -42,7 +42,6 @@ export class AnnouncementRepository implements IAnnouncementRepository {
     limit,
     page,
   }: PersonalAnnouncementParams): Promise<Announcement[]> {
-    console.log(limit, page, limit * (page - 1));
     const announcements = await this.prisma.announcementEntity.findMany({
       where: {
         OR: [
@@ -74,6 +73,7 @@ export class AnnouncementRepository implements IAnnouncementRepository {
             user: true,
           },
         },
+        course: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -100,6 +100,9 @@ export class AnnouncementRepository implements IAnnouncementRepository {
             user: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 

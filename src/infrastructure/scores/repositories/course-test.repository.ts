@@ -79,7 +79,6 @@ export class CourseTestRepository implements ICourseTestRepository {
   }: StudentTestScoresParams): Promise<StudentTestScore[]> {
     const testIdString = testId.toString();
     const offset = (page - 1) * limit;
-    console.log(offset);
     return this.prisma.$queryRaw<StudentTestScore[]>`
         WITH course_students AS (
             SELECT cs."studentId" 

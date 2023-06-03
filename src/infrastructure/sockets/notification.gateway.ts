@@ -43,13 +43,10 @@ export default class NotificationGateway
     this.connections.delete(userId);
   }
 
-  afterInit(): void {
-    console.log(`Websocket Gateway initialized.`);
-  }
+  afterInit(): void {}
 
   @OnEvent('announcement.created')
   handleAnnouncementCreated({ ids, notification }: AnnouncementCreatedPayload) {
-    // console.log(ids, notification);
     this.connections.forEach((socket: Socket, key: number) => {
       if (ids.includes(key))
         socket.emit('notification', {
@@ -60,6 +57,7 @@ export default class NotificationGateway
           professorSurname: notification?.professor?.surname,
           createdAt: notification?.createdAt,
           avatar: notification?.professor?.user?.avatar,
+          courseTitle: notification?.course?.title,
         });
     });
   }

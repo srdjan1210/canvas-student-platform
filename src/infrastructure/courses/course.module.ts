@@ -104,6 +104,6 @@ const providers: Provider[] = [
     SpecializationModule,
     AuthModule,
   ],
-  exports: [COURSE_REPOSITORY],
+  exports: [COURSE_REPOSITORY, ANNOUNCEMENT_REPOSITORY],
 })
 export class CourseModule {}

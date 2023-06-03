@@ -1,4 +1,9 @@
-import { ArgumentsHost, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 import { BaseException } from '../../application/shared/base.exception';
 import { Response } from 'express';
 import { EmailAlreadyTakenException } from '../../domain/auth/exceptions/email-already-taken.exception';
@@ -9,6 +14,7 @@ import { NotCourseProfessorException } from '../../domain/courses/exceptions/not
 import { ProfessorNotInCourseException } from '../../domain/courses/exceptions/professor-not-in-course.exception';
 import { StudentNotEnrolledInCourseException } from '../../domain/courses/exceptions/student-not-enrolled-in-course.exception';
 import { PointsNegativeValueException } from '../../domain/scores/exceptions/points-negative-value.exception';
+@Catch(BaseException)
 export class DomainErrorFilter implements ExceptionFilter<BaseException> {
   catch(exception: BaseException, host: ArgumentsHost): any {
     const context = host.switchToHttp();

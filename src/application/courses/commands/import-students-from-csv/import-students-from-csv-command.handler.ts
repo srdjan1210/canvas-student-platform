@@ -28,6 +28,10 @@ export class ImportStudentsFromCsvCommandHandler
     if (!course) throw new CourseNotFoundException();
     const parsedStudents = await this.csvService.parseStudents(csvFile);
     const indexes = parsedStudents.map((student) => student.fullIndex);
-    return this.courseRepository.filterStudentsNotInCourse(courseName, indexes);
+    const parsed = await this.courseRepository.filterStudentsNotInCourse(
+      courseName,
+      indexes,
+    );
+    return parsed;
   }
 }

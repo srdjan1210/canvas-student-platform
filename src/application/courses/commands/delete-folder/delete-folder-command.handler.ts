@@ -26,7 +26,6 @@ export class DeleteFolderCommandHandler
 
   async execute({ authenticated, folder }: DeleteFolderCommand): Promise<void> {
     const title = folder.split('/')[0];
-    console.log(folder);
     const course = await this.courseRepository.findByTitleIncluding(title, {
       professors: true,
     });

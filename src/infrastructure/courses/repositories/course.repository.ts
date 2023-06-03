@@ -256,7 +256,7 @@ export class CourseRepository implements ICourseRepository {
     const students = await this.prisma.studentEntity.findMany({
       where: {
         courses: {
-          some: {
+          none: {
             course: {
               title,
             },
